@@ -58,3 +58,6 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Rust/**/*.meta
+build.sh.meta
+build.ps1.meta

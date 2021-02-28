@@ -1,0 +1,14 @@
+[package]
+authors = ["Josiah Putman <joshikatsu@gmail.com>"]
+edition = "2018"
+name = "kataru-ffi"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+kataru = {git = "https://github.com/Katsutoshii/kataru.git", branch = "main"}
+lazy_static = "1.4.0"
+serde = "1.0.123"
