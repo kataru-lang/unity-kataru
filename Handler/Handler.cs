@@ -20,6 +20,7 @@ namespace Kataru
         protected virtual void OnEnable()
         {
             Runner.OnChoices += OnChoices;
+            Runner.OnDialogueEnd += OnDialogueEnd;
 
             foreach (var namedAction in GetActionsForAttribute<Command, CommandHandler>())
             {
@@ -40,6 +41,7 @@ namespace Kataru
         protected virtual void OnDisable()
         {
             Runner.OnChoices -= OnChoices;
+            Runner.OnDialogueEnd -= OnDialogueEnd;
 
             foreach (var pair in Commands)
             {
@@ -53,5 +55,6 @@ namespace Kataru
         }
 
         protected virtual void OnChoices(Choices choices) { }
+        protected virtual void OnDialogueEnd() { }
     }
 }

@@ -50,7 +50,7 @@ namespace Kataru
             }
             else
             {
-                Debug.LogError($"Command '{name}' had no listeners.");
+                Debug.LogError($"'{name}' had no listeners.");
             }
         }
     }

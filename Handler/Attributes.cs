@@ -71,18 +71,31 @@ namespace Kataru
             {
                 foreach (var attribute in methodInfo.GetCustomAttributes<A>(false))
                 {
+                    // [KataruCharacterHandler] -> prefixedOnly = true -> Name
+                    // [KataruCharacterHandler("Character")] -> prefixedOnly = true -> attribute.Name
+                    // [KataruCommandHandler] -> prefixed = false -> method.Name
+                    // [KataruCommandHandler("Name")] -> prefixed = false -> attribute.Name
+
                     // If prefix is set to something other than empty string, the action name will be "{prefix}.{name}".
                     // Otherwise it will just be "name".
+
                     string name = "";
                     if (attribute.PrefixOnly)
                     {
                         name = Name;
                     }
-                    else if (attribute.Prefixed)
+                    else
                     {
-                        name = Name + ".";
+                        string suffix = attribute.Name.Length > 0 ? attribute.Name : methodInfo.Name;
+                        if (attribute.Prefixed)
+                        {
+                            name = $"{Name}.{suffix}";
+                        }
+                        else
+                        {
+                            name = suffix;
+                        }
                     }
-                    name += (attribute.Name.Length > 0 ? attribute.Name : methodInfo.Name);
 
                     yield return new NamedAction<T>
                     {

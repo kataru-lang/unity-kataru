@@ -51,12 +51,12 @@ namespace Kataru
     public class Command
     {
         public string name;
-        public IDictionary<string, object> parameters;
+        public Dictionary<string, object> parameters;
     }
 
     public class Choices
     {
-        public IList<string> choices;
+        public List<string> choices;
         public double timeout;
     }
 

@@ -8,7 +8,7 @@ namespace Kataru
     /// The Kataru Runner serves as the high level interface with the Kataru Rust FFI module.
     /// This ScriptableObject 
     /// </summary>
-    [CreateAssetMenu(fileName = "KataruRunner", menuName = "ScriptableObjects/KataruRunner", order = 1)]
+    [CreateAssetMenu(fileName = "KataruRunner", menuName = "ScriptableObjects/Kataru/Runner", order = 1)]
     public class Runner : ScriptableObject
     {
         [SerializeField] public string bookmarkPath = "Kataru/Bookmark.yml";
@@ -22,6 +22,7 @@ namespace Kataru
         // Events to listen to.
         public event Action<Choices> OnChoices;
         public event Action OnInvalidChoice;
+        public event Action OnDialogueEnd;
         public event Action<InputCommand> OnInputCommand;
 
         public EventMap<Command> Commands = new EventMap<Command>();
@@ -73,12 +74,13 @@ namespace Kataru
         /// This yields line data from internal dialogue runner, whose data is passed via invoking actions.
         /// </summary>
         /// <param name="input"></param>
-        public void Next(string input)
+        public void Next(string input = "")
         {
 #if UNITY_EDITOR
             Debug.Log($"Kataru.Next('" + input + "')");
 #endif
             FFI.Next(input);
+            Debug.Log($"tag: {FFI.Tag()}");
             switch (FFI.Tag())
             {
                 case LineTag.Choices:
@@ -106,6 +108,7 @@ namespace Kataru
                     break;
 
                 case LineTag.None:
+                    OnDialogueEnd.Invoke();
                     break;
             }
         }
