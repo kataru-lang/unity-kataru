@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 
 namespace Kataru
 {
@@ -56,6 +57,21 @@ namespace Kataru
         public T Get<T>(string key)
         {
             return (T)parameters[key];
+        }
+
+        public object[] Params(MethodInfo methodInfo)
+        {
+            ParameterInfo[] paramInfos = methodInfo.GetParameters();
+            object[] @params = new object[paramInfos.Length];
+            for (int i = 0; i < paramInfos.Length; ++i)
+            {
+                if (!parameters.TryGetValue(paramInfos[i].Name, out @params[i]))
+                {
+                    throw new KeyNotFoundException($"Parameter '{paramInfos[i].Name}' was not provided.");
+                }
+            }
+
+            return @params;
         }
     }
 

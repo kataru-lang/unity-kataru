@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using System;
+using System.Collections.Generic;
 
 namespace Kataru
 {
@@ -25,8 +26,8 @@ namespace Kataru
         public event Action OnDialogueEnd;
         public event Action<InputCommand> OnInputCommand;
 
-        public EventMap<Command> Commands = new EventMap<Command>();
-        public EventMap<Dialogue> Characters = new EventMap<Dialogue>();
+        public DelegateMap CommandDelegates = new DelegateMap();
+        public DelegateMap CharacterDelegates = new DelegateMap();
 
         /// <summary>
         /// Initialize the story, bookmark and internal runner.
@@ -103,13 +104,23 @@ namespace Kataru
 
                 case LineTag.Dialogue:
                     Dialogue dialogue = FFI.LoadDialogue();
-                    Characters.Invoke(dialogue.name, dialogue);
+                    CharacterDelegates.Invoke(dialogue.name, new object[] { dialogue });
                     break;
 
                 case LineTag.Commands:
                     foreach (Command command in FFI.LoadCommands())
                     {
-                        Commands.Invoke(command.name, command);
+                        Debug.Log($"Calling command {command.name}");
+                        List<Delegate> delegates;
+                        if (CommandDelegates.TryGetValue(command.name, out delegates))
+                        {
+                            var @params = command.Params(delegates[0].Method);
+                            CommandDelegates.Invoke(command.name, @params);
+                        }
+                        else
+                        {
+                            throw new KeyNotFoundException($"No Kataru command named '{command.name}'");
+                        }
                     }
                     break;
 

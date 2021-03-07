@@ -3,6 +3,8 @@ using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Kataru
 {
@@ -41,6 +43,15 @@ namespace Kataru
         public CharacterHandler(string name = "") : base(name, prefixOnly: name.Length == 0) { }
     }
 
+    public static class ReflectionUtils
+    {
+        public static Delegate CreateDelegate(this MethodInfo methodInfo, object target)
+        {
+            var types = methodInfo.GetParameters().Select(p => p.ParameterType);
+            return Action.CreateDelegate(Expression.GetActionType(types.ToArray()), target, methodInfo.Name);
+        }
+    }
+
     /// <summary>
     /// A MonoBehavior that can has KataruAttributes on its methods.
     /// Inherit from this class to be able to iterate over all methods containing named KataruAttributes.
@@ -49,10 +60,10 @@ namespace Kataru
     {
         protected virtual string Name { get; }
 
-        protected struct NamedAction<T>
+        protected struct NamedDelegate
         {
             public string name;
-            public UnityAction<T> action;
+            public Delegate @delegate;
         }
 
         /// <summary>
@@ -63,7 +74,7 @@ namespace Kataru
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="A"></typeparam>
         /// <returns></returns>
-        protected IEnumerable<NamedAction<T>> GetActionsForAttribute<T, A>() where A : NamedAttribute
+        protected IEnumerable<NamedDelegate> GetActionsForAttribute<A>() where A : NamedAttribute
         {
             var type = this.GetType();
             foreach (var methodInfo in type.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
@@ -95,13 +106,12 @@ namespace Kataru
                             name = suffix;
                         }
                     }
-
                     Debug.Log($"Name '{name}'");
 
-                    yield return new NamedAction<T>
+                    yield return new NamedDelegate
                     {
                         name = name,
-                        action = (T arg) => methodInfo.Invoke(this, new object[] { arg })
+                        @delegate = methodInfo.CreateDelegate(this)
                     };
                 }
             }

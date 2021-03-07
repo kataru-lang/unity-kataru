@@ -1,5 +1,12 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
+/*
+The Runner owns dictionary of delegates.
+All annotated functions are added to the delegates.
+When the runner 
+*/
 namespace Kataru
 {
     /// <summary>
@@ -11,8 +18,9 @@ namespace Kataru
     {
         [SerializeField] protected Runner Runner;
 
-        protected ActionMap<Command> CommandActions = new ActionMap<Command>();
-        protected ActionMap<Dialogue> CharacterActions = new ActionMap<Dialogue>();
+        // Keep local copies of delegates so they may be removed on Disable.
+        protected DelegateMap CommandDelegates = new DelegateMap();
+        protected DelegateMap CharacterDelegates = new DelegateMap();
 
         /// <summary>
         /// Adds listeners for all attributed methods in this subclass.
@@ -22,16 +30,16 @@ namespace Kataru
             Runner.OnChoices += OnChoices;
             Runner.OnDialogueEnd += OnDialogueEnd;
 
-            foreach (var namedAction in GetActionsForAttribute<Command, CommandHandler>())
+            foreach (var namedDelegate in GetActionsForAttribute<CommandHandler>())
             {
-                CommandActions.Add(namedAction.name, namedAction.action);
-                Runner.Commands.Add(namedAction.name, namedAction.action);
+                CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
+                Runner.CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
             }
 
-            foreach (var namedAction in GetActionsForAttribute<Dialogue, CharacterHandler>())
+            foreach (var namedDelegate in GetActionsForAttribute<CharacterHandler>())
             {
-                CharacterActions.Add(namedAction.name, namedAction.action);
-                Runner.Characters.Add(namedAction.name, namedAction.action);
+                CharacterDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
+                Runner.CharacterDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
             }
         }
 
@@ -43,15 +51,24 @@ namespace Kataru
             Runner.OnChoices -= OnChoices;
             Runner.OnDialogueEnd -= OnDialogueEnd;
 
-            foreach (var pair in CommandActions)
+            foreach (var pair in CommandDelegates)
             {
-                Runner.Commands.Remove(pair.Key, pair.Value);
+                foreach (var @delegate in pair.Value)
+                {
+                    Runner.CommandDelegates.Remove(pair.Key, @delegate);
+                }
             }
 
-            foreach (var pair in CharacterActions)
+            foreach (var pair in CharacterDelegates)
             {
-                Runner.Characters.Remove(pair.Key, pair.Value);
+                foreach (var @delegate in pair.Value)
+                {
+                    Runner.CharacterDelegates.Remove(pair.Key, @delegate);
+                }
             }
+
+            CommandDelegates.Clear();
+            CharacterDelegates.Clear();
         }
 
         protected virtual void OnChoices(Choices choices) { }
