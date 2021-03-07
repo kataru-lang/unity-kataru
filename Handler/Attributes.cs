@@ -10,10 +10,9 @@ namespace Kataru
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class NamedAttribute : System.Attribute
     {
-
-        public string Name { get; set; }
-        public bool Prefixed { get; set; }
-        public bool PrefixOnly { get; set; }
+        public string Name { get; }
+        public bool Prefixed { get; }
+        public bool PrefixOnly { get; }
         public NamedAttribute(string name, bool prefixed = false, bool prefixOnly = false)
         {
             Name = name;
@@ -48,7 +47,7 @@ namespace Kataru
     /// </summary>
     public class Attributed : MonoBehaviour
     {
-        [SerializeField] public string Name = "";
+        protected virtual string Name { get; }
 
         protected struct NamedAction<T>
         {
@@ -96,6 +95,8 @@ namespace Kataru
                             name = suffix;
                         }
                     }
+
+                    Debug.Log($"Name '{name}'");
 
                     yield return new NamedAction<T>
                     {

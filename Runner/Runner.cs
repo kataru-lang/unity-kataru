@@ -70,6 +70,16 @@ namespace Kataru
         public void SetState(string key, bool value) => FFI.SetState(key, value);
 
         /// <summary>
+        /// Goto a passage and run the first line.
+        /// </summary>
+        /// <param name="passage"></param>
+        public void RunPassage(string passage)
+        {
+            GotoPassage(passage);
+            Next();
+        }
+
+        /// <summary>
         /// Progress the story using the given input.
         /// This yields line data from internal dialogue runner, whose data is passed via invoking actions.
         /// </summary>

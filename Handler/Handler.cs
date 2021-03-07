@@ -11,8 +11,8 @@ namespace Kataru
     {
         [SerializeField] protected Runner Runner;
 
-        protected ActionMap<Command> Commands = new ActionMap<Command>();
-        protected ActionMap<Dialogue> Characters = new ActionMap<Dialogue>();
+        protected ActionMap<Command> CommandActions = new ActionMap<Command>();
+        protected ActionMap<Dialogue> CharacterActions = new ActionMap<Dialogue>();
 
         /// <summary>
         /// Adds listeners for all attributed methods in this subclass.
@@ -24,13 +24,13 @@ namespace Kataru
 
             foreach (var namedAction in GetActionsForAttribute<Command, CommandHandler>())
             {
-                Commands.Add(namedAction.name, namedAction.action);
+                CommandActions.Add(namedAction.name, namedAction.action);
                 Runner.Commands.Add(namedAction.name, namedAction.action);
             }
 
             foreach (var namedAction in GetActionsForAttribute<Dialogue, CharacterHandler>())
             {
-                Characters.Add(namedAction.name, namedAction.action);
+                CharacterActions.Add(namedAction.name, namedAction.action);
                 Runner.Characters.Add(namedAction.name, namedAction.action);
             }
         }
@@ -43,12 +43,12 @@ namespace Kataru
             Runner.OnChoices -= OnChoices;
             Runner.OnDialogueEnd -= OnDialogueEnd;
 
-            foreach (var pair in Commands)
+            foreach (var pair in CommandActions)
             {
                 Runner.Commands.Remove(pair.Key, pair.Value);
             }
 
-            foreach (var pair in Characters)
+            foreach (var pair in CharacterActions)
             {
                 Runner.Characters.Remove(pair.Key, pair.Value);
             }
