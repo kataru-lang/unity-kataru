@@ -52,6 +52,11 @@ namespace Kataru
     {
         public string name;
         public Dictionary<string, object> parameters;
+
+        public T Get<T>(string key)
+        {
+            return (T)parameters[key];
+        }
     }
 
     public class Choices
