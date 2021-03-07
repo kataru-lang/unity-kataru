@@ -1,4 +1,5 @@
 Push-Location .Rust
+cargo update
 cargo build --target x86_64-pc-windows-msvc --all-features --release
 Pop-Location
 
