@@ -108,3 +108,34 @@ pub extern "C" fn goto_passage(passage: *const c_char, length: usize) -> FFIStr 
     let passage = FFIStr::to_str(passage, length);
     FFIStr::result(try_goto_passage(passage))
 }
+
+fn try_save_snapshot(name: &str) -> Result<()> {
+    unsafe {
+        match RUNNER.as_mut() {
+            Some(runner) => {
+                runner.save_snapshot(name);
+                Ok(())
+            }
+            None => Err(error!("Bookmark was None.")),
+        }
+    }
+}
+#[no_mangle]
+pub extern "C" fn save_snapshot(name: *const c_char, length: usize) -> FFIStr {
+    let name = FFIStr::to_str(name, length);
+    FFIStr::result(try_save_snapshot(name))
+}
+
+fn try_load_snapshot(name: &str) -> Result<()> {
+    unsafe {
+        match RUNNER.as_mut() {
+            Some(runner) => runner.load_snapshot(name),
+            None => Err(error!("Bookmark was None.")),
+        }
+    }
+}
+#[no_mangle]
+pub extern "C" fn load_snapshot(name: *const c_char, length: usize) -> FFIStr {
+    let name = FFIStr::to_str(name, length);
+    FFIStr::result(try_load_snapshot(name))
+}

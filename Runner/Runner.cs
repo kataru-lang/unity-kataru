@@ -28,6 +28,8 @@ namespace Kataru
         public DelegateMap CommandDelegates = new DelegateMap();
         public DelegateMap CharacterDelegates = new DelegateMap();
 
+        public LineTag Tag = LineTag.None;
+
         /// <summary>
         /// Initialize the story, bookmark and internal runner.
         /// This method should only be called once.
@@ -82,6 +84,21 @@ namespace Kataru
         }
 
         /// <summary>
+        /// Goto a passage and run until choices are required.
+        /// </summary>
+        /// <param name="passage"></param>
+        public void RunPassageUntilChoice(string passage)
+        {
+            GotoPassage(passage);
+            Next();
+
+            while (Tag == LineTag.Dialogue || Tag == LineTag.Commands)
+            {
+                Next();
+            }
+        }
+
+        /// <summary>
         /// Progress the story using the given input.
         /// This yields line data from internal dialogue runner, whose data is passed via invoking actions.
         /// </summary>
@@ -92,18 +109,22 @@ namespace Kataru
             Debug.Log($"Kataru.Next('" + input + "')");
 #endif
             FFI.Next(input);
-            switch (FFI.Tag())
+            Tag = FFI.Tag();
+            Debug.Log($"Tag: {Tag}");
+            switch (Tag)
             {
                 case LineTag.Choices:
                     OnChoices.Invoke(FFI.LoadChoices());
                     break;
 
                 case LineTag.InvalidChoice:
+                    Debug.LogError("Invalid choice");
                     OnInvalidChoice.Invoke();
                     break;
 
                 case LineTag.Dialogue:
                     Dialogue dialogue = FFI.LoadDialogue();
+                    Debug.Log($"{dialogue.name}: '{dialogue.text}'");
                     CharacterDelegates.Invoke(dialogue.name, new object[] { dialogue });
                     break;
 
