@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
 
@@ -64,6 +63,8 @@ namespace Kataru
             FFI.InitRunner();
         }
 
+        public void SaveSnapshot(string name) => FFI.SaveSnapshot(name);
+        public void LoadSnapshot(string name) => FFI.LoadSnapshot(name);
         public void SetLine(int line) => FFI.SetLine(line);
         public void GotoPassage(string passage) => FFI.GotoPassage(passage);
         public void SetState(string key, string value) => FFI.SetState(key, value);

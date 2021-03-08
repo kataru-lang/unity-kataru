@@ -29,6 +29,22 @@ namespace Kataru
         }
 
         [DllImport("kataru_ffi")]
+        static extern FFIStr load_snapshot(byte[] name, UIntPtr length);
+        public static void LoadSnapshot(string name)
+        {
+            var bytes = Encoding.UTF8.GetBytes(name);
+            load_snapshot(bytes, (UIntPtr)bytes.Length).ThrowIfError();
+        }
+
+        [DllImport("kataru_ffi")]
+        static extern FFIStr save_snapshot(byte[] name, UIntPtr length);
+        public static void SaveSnapshot(string name)
+        {
+            var bytes = Encoding.UTF8.GetBytes(name);
+            save_snapshot(bytes, (UIntPtr)bytes.Length).ThrowIfError();
+        }
+
+        [DllImport("kataru_ffi")]
         static extern FFIStr set_state_string(byte[] key, UIntPtr length, byte[] value, UIntPtr value_length);
         public static void SetState(string key, string value)
         {

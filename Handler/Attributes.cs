@@ -8,7 +8,6 @@ using System.Linq.Expressions;
 
 namespace Kataru
 {
-
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class NamedAttribute : System.Attribute
     {
@@ -106,7 +105,6 @@ namespace Kataru
                             name = suffix;
                         }
                     }
-                    Debug.Log($"Name '{name}'");
 
                     yield return new NamedDelegate
                     {
