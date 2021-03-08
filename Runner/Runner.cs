@@ -36,7 +36,7 @@ namespace Kataru
         public void Init()
         {
 #if UNITY_EDITOR
-            Debug.Log($"Kataru.Init('{StoryPath}')");
+            Debug.Log($"Kataru.Init(StoryPath: '{StoryPath}', 'SavePath: {SavePath}')");
 #endif
             FFI.LoadStory(StoryPath);
             FFI.Validate();
@@ -91,7 +91,6 @@ namespace Kataru
             Debug.Log($"Kataru.Next('" + input + "')");
 #endif
             FFI.Next(input);
-            Debug.Log($"tag: {FFI.Tag()}");
             switch (FFI.Tag())
             {
                 case LineTag.Choices:
