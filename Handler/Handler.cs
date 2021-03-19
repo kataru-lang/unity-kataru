@@ -27,7 +27,7 @@ namespace Kataru
         /// </summary>
         protected virtual void OnEnable()
         {
-            if (Runner == null) throw new NullReferenceException($"Kataru Runner was null for {gameObject.name}");
+            if (Runner == null) throw new NullReferenceException($"Kataru Runner was null for game object '{gameObject.name}'");
 
             Runner.OnChoices += OnChoices;
             Runner.OnDialogueEnd += OnDialogueEnd;
