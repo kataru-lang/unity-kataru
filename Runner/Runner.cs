@@ -72,6 +72,7 @@ namespace Kataru
         public void SetState(string key, string value) => FFI.SetState(key, value);
         public void SetState(string key, double value) => FFI.SetState(key, value);
         public void SetState(string key, bool value) => FFI.SetState(key, value);
+        public string GetPassage() => FFI.GetPassage();
 
         /// <summary>
         /// Goto a passage and run the first line.
