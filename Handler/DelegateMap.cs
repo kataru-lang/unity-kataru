@@ -38,9 +38,13 @@ namespace Kataru
                     {
                         @delegate.DynamicInvoke(args);
                     }
-                    catch (Exception)
+                    catch (System.Reflection.TargetInvocationException e)
                     {
-                        Debug.LogError($"Invalid command arguments on method '{name}'. Make sure all listener arguments match the definition in Kataru.");
+                        Debug.LogError($"Error calling '{name}': {e.InnerException}");
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Error calling '{name}'. Make sure all listener arguments match the definition in Kataru: {e}");
                     }
                 }
             }
