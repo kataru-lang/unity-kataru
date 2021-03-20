@@ -25,7 +25,7 @@ namespace Kataru
             if (length != UIntPtr.Zero)
             {
                 string errorMsg = ToString();
-                throw new Exception(errorMsg);
+                throw new Exception($"'{errorMsg}'");
             }
         }
     }
