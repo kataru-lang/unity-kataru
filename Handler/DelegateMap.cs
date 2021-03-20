@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Events;
 using System;
 using System.Collections.Generic;
 
@@ -35,7 +34,14 @@ namespace Kataru
             {
                 foreach (var @delegate in delegates)
                 {
-                    @delegate.DynamicInvoke(args);
+                    try
+                    {
+                        @delegate.DynamicInvoke(args);
+                    }
+                    catch (Exception)
+                    {
+                        Debug.LogError($"Invalid command arguments on method '{name}'. Make sure all listener arguments match the definition in Kataru.");
+                    }
                 }
             }
             else
