@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Kataru
 {
@@ -154,6 +155,16 @@ namespace Kataru
                     OnDialogueEnd.Invoke();
                     break;
             }
+        }
+
+        /// <summary>
+        /// Calls next after waiting a bit.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator DelayedNext(float seconds, string input = "")
+        {
+            yield return new WaitForSeconds(seconds);
+            Next(input);
         }
     }
 }
