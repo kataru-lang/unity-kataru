@@ -159,6 +159,7 @@ namespace Kataru
 
         /// <summary>
         /// Calls next after waiting a bit.
+        /// Must be called using GameObject.StartCoroutine.
         /// </summary>
         /// <returns></returns>
         public IEnumerator DelayedNext(float seconds, string input = "")
