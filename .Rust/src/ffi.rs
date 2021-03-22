@@ -2,6 +2,8 @@ use std::fmt;
 use std::os::raw::c_char;
 use std::{slice, str};
 
+static mut RESULT: String = String::new();
+
 #[no_mangle]
 pub extern "C" fn test_mod() -> FFIStr {
     FFIStr::from("Test works!")
@@ -29,7 +31,10 @@ impl FFIStr {
     pub fn result<T, E: fmt::Debug>(result: Result<T, E>) -> Self {
         match result {
             Ok(_) => Self::from(""),
-            Err(e) => Self::from(&format!("{:?}", e)),
+            Err(e) => unsafe {
+                RESULT = format!("{:?}", e);
+                Self::from(&RESULT)
+            },
         }
     }
 }

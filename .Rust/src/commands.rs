@@ -6,44 +6,30 @@ use kataru::*;
 
 #[repr(C)]
 pub enum ParamType {
-    None,
     String,
     Number,
     Bool,
 }
 
-static mut COMMANDS: Vec<FFIStr> = Vec::new();
 static mut PARAMS: Vec<FFIStr> = Vec::new();
 static mut VALUES: Vec<Value> = Vec::new();
 
 #[no_mangle]
-pub extern "C" fn get_commands() -> usize {
+pub extern "C" fn get_command() -> FFIStr {
     unsafe {
-        if let Some(Line::Commands(cmds)) = &LINE {
-            COMMANDS = Vec::new();
-            COMMANDS.reserve(cmds.len());
-            for cmd in cmds {
-                for (cmd_name, _params) in cmd {
-                    COMMANDS.push(FFIStr::from(cmd_name));
-                }
+        if let Some(Line::Command(command)) = &LINE {
+            for (command_name, _params) in command {
+                return FFIStr::from(command_name);
             }
-            cmds.len()
-        } else {
-            0
         }
+        FFIStr::from("")
     }
 }
 
 #[no_mangle]
-pub extern "C" fn get_command(i: usize) -> FFIStr {
-    unsafe { COMMANDS[i] }
-}
-
-#[no_mangle]
-pub extern "C" fn get_params(i: usize) -> usize {
+pub extern "C" fn get_params() -> usize {
     unsafe {
-        if let Some(Line::Commands(cmds)) = &LINE {
-            let cmd = &cmds[i];
+        if let Some(Line::Command(cmd)) = &LINE {
             for (_cmd_name, params) in cmd {
                 PARAMS = Vec::new();
                 PARAMS.reserve(params.len());
@@ -70,7 +56,6 @@ pub extern "C" fn get_param(i: usize) -> FFIStr {
 pub extern "C" fn get_param_type(i: usize) -> ParamType {
     unsafe {
         match VALUES[i] {
-            Value::None => ParamType::None,
             Value::String(_) => ParamType::String,
             Value::Number(_) => ParamType::Number,
             Value::Bool(_) => ParamType::Bool,

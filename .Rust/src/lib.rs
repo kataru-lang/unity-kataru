@@ -18,6 +18,6 @@ pub use choices::{get_choice, get_choices, get_timeout};
 
 mod commands;
 pub use commands::{
-    get_command, get_commands, get_param, get_param_bool, get_param_number, get_param_string,
-    get_param_type, get_params,
+    get_command, get_param, get_param_bool, get_param_number, get_param_string, get_param_type,
+    get_params,
 };

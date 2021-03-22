@@ -142,16 +142,12 @@ namespace Kataru
 
         #region Commands
         [DllImport("kataru_ffi")]
-        static extern UIntPtr get_commands();
-        static int GetCommands() => (int)get_commands();
+        static extern FFIStr get_command();
+        static string GetCommand() => get_command().ToString();
 
         [DllImport("kataru_ffi")]
-        static extern FFIStr get_command(UIntPtr i);
-        static string GetCommand(int i) => get_command((UIntPtr)i).ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern int get_params(UIntPtr i);
-        static int GetParams(int i) => (int)get_params((UIntPtr)i);
+        static extern int get_params();
+        static int GetParams() => (int)get_params();
 
         [DllImport("kataru_ffi")]
         static extern FFIStr get_param(UIntPtr i);
@@ -185,20 +181,15 @@ namespace Kataru
             }
         }
 
-        public static IEnumerable<Command> LoadCommands()
+        public static Command LoadCommand()
         {
-            var commands = new List<string>();
-            int numCommands = GetCommands();
-            for (int i = 0; i < numCommands; ++i)
+            var parameters = new Dictionary<string, object>();
+            int numParameters = GetParams();
+            for (int i = 0; i < numParameters; ++i)
             {
-                var parameters = new Dictionary<string, object>();
-                int numParameters = GetParams(i);
-                for (int j = 0; j < numParameters; ++j)
-                {
-                    parameters[GetParam(j)] = GetParamValue(j);
-                }
-                yield return new Command() { name = GetCommand(i), parameters = parameters };
+                parameters[GetParam(i)] = GetParamValue(i);
             }
+            return new Command() { name = GetCommand(), parameters = parameters };
         }
 
         public static InputCommand LoadInputCommand()

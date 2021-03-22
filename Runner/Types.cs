@@ -15,7 +15,6 @@ namespace Kataru
 
     public enum ParamType
     {
-        None,
         String,
         Number,
         Bool,

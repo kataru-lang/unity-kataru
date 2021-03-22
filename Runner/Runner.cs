@@ -131,19 +131,17 @@ namespace Kataru
                     break;
 
                 case LineTag.Commands:
-                    foreach (Command command in FFI.LoadCommands())
+                    Command command = FFI.LoadCommand();
+                    Debug.Log($"Calling command {command.name}");
+                    List<Delegate> delegates;
+                    if (CommandDelegates.TryGetValue(command.name, out delegates))
                     {
-                        Debug.Log($"Calling command {command.name}");
-                        List<Delegate> delegates;
-                        if (CommandDelegates.TryGetValue(command.name, out delegates))
-                        {
-                            var @params = command.Params(delegates[0].Method);
-                            CommandDelegates.Invoke(command.name, @params);
-                        }
-                        else
-                        {
-                            throw new KeyNotFoundException($"No Kataru command named '{command.name}'");
-                        }
+                        var @params = command.Params(delegates[0].Method);
+                        CommandDelegates.Invoke(command.name, @params);
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException($"No Kataru command named '{command.name}'");
                     }
                     break;
 
