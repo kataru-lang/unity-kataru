@@ -96,6 +96,7 @@ fn try_goto_passage(passage: &str) -> Result<()> {
         if let Some(runner) = RUNNER.as_mut() {
             runner.bookmark.position.passage = passage.to_string();
             runner.bookmark.position.line = 0;
+            runner.bookmark.stack = Vec::new();
             runner.goto()?;
             Ok(())
         } else {
