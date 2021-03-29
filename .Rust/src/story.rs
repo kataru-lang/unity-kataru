@@ -39,7 +39,6 @@ fn try_init_runner() -> Result<()> {
     unsafe {
         if let Some(bookmark) = BOOKMARK.as_mut() {
             if let Some(story) = STORY.as_ref() {
-                bookmark.init_state(story);
                 RUNNER = Some(Runner::new(bookmark, story)?);
                 Ok(())
             } else {
@@ -58,8 +57,12 @@ pub extern "C" fn init_runner() -> FFIStr {
 fn try_validate() -> Result<()> {
     unsafe {
         if let Some(story) = STORY.as_ref() {
-            Validator::new(story).validate()?;
-            Ok(())
+            if let Some(bookmark) = BOOKMARK.as_mut() {
+                Validator::new(story, bookmark).validate()?;
+                Ok(())
+            } else {
+                Err(error!("Bookmark was None."))
+            }
         } else {
             Err(error!("Story was None."))
         }

@@ -41,8 +41,8 @@ namespace Kataru
             Debug.Log($"Kataru.Init(StoryPath: '{StoryPath}', 'SavePath: {SavePath}')");
 #endif
             FFI.LoadStory(StoryPath);
-            FFI.Validate();
             FFI.LoadBookmark(BookmarkPath);
+            FFI.Validate();
             FFI.InitRunner();
         }
 

@@ -1,4 +1,5 @@
 pub use crate::ffi::{FFIArray, FFIStr};
+use crate::STORY;
 use kataru::*;
 use std::os::raw::c_char;
 
@@ -8,8 +9,16 @@ pub static mut BOOKMARK: Option<Bookmark> = None;
 /// If `default` is `true`, on failure to load it will create a new default bookmark.
 fn try_load_bookmark(path: &str) -> Result<()> {
     unsafe {
-        BOOKMARK = Some(Bookmark::load(path)?);
-        Ok(())
+        let mut bookmark = Bookmark::load(path)?;
+        if let Some(story) = STORY.as_ref() {
+            bookmark.init_state(story);
+            BOOKMARK = Some(bookmark);
+            Ok(())
+        } else {
+            Err(error!(
+                "Tried to load bookmark before loading story. Load story first."
+            ))
+        }
     }
 }
 #[no_mangle]
