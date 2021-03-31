@@ -68,7 +68,11 @@ namespace Kataru
         /// <summary>
         /// Deletes the save file.
         /// </summary>
-        public static void DeleteSave() => File.Delete(savePath);
+        public static void DeleteSave()
+        {
+            if (SaveExists())
+                File.Delete(savePath);
+        }
 
         /// <summary>
         /// /// Load bookmark from the save path path.
