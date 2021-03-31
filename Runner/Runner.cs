@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.IO;
+using System.Collections.Concurrent;
 
 namespace Kataru
 {
@@ -145,10 +146,15 @@ namespace Kataru
                 case LineTag.Commands:
                     Command command = FFI.LoadCommand();
                     Debug.Log($"Calling command {command.name}");
-                    List<Delegate> delegates;
+                    ConcurrentDictionary<Delegate, byte> delegates;
                     if (CommandDelegates.TryGetValue(command.name, out delegates))
                     {
-                        var @params = command.Params(delegates[0].Method);
+                        object[] @params = new object[] { };
+                        foreach (var @delegate in delegates.Keys)
+                        {
+                            @params = command.Params(@delegate.Method);
+                            break;
+                        }
                         CommandDelegates.Invoke(command.name, @params);
                     }
                     else

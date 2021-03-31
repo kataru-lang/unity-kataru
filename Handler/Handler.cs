@@ -51,7 +51,7 @@ namespace Kataru
 
             foreach (var pair in CommandDelegates)
             {
-                foreach (var @delegate in pair.Value)
+                foreach (var @delegate in pair.Value.Keys)
                 {
                     Runner.CommandDelegates.Remove(pair.Key, @delegate);
                 }
@@ -59,7 +59,7 @@ namespace Kataru
 
             foreach (var pair in CharacterDelegates)
             {
-                foreach (var @delegate in pair.Value)
+                foreach (var @delegate in pair.Value.Keys)
                 {
                     Runner.CharacterDelegates.Remove(pair.Key, @delegate);
                 }
