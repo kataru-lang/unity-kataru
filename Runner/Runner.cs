@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.IO;
 
 namespace Kataru
 {
@@ -57,8 +58,18 @@ namespace Kataru
             FFI.SaveBookmark(SavePath);
         }
 
+        public bool SaveExists()
+        {
+            return File.Exists(SavePath);
+        }
+
+        public void DeleteSave()
+        {
+            File.Delete(SavePath);
+        }
+
         /// <summary>
-        /// Load bookmark from path.
+        /// /// Load bookmark from path.
         /// </summary>
         public void Load()
         {
