@@ -8,41 +8,42 @@ namespace Kataru
 {
     /// <summary>
     /// The Kataru Runner serves as the high level interface with the Kataru Rust FFI module.
-    /// This ScriptableObject 
     /// </summary>
-    [CreateAssetMenu(fileName = "KataruRunner", menuName = "ScriptableObjects/Kataru/Runner", order = 1)]
-    public class Runner : ScriptableObject
+    public static class Runner
     {
-        [SerializeField] public string bookmarkPath = "Kataru/Bookmark.yml";
-        [SerializeField] public string savePath = "Bookmark.bin";
-        [SerializeField] public string storyPath = "Kataru/Story";
-
-        public string BookmarkPath { get => Application.dataPath + "/" + bookmarkPath; }
-        public string SavePath { get => Application.persistentDataPath + "/" + savePath; }
-        public string StoryPath { get => Application.dataPath + "/" + storyPath; }
+        static string bookmarkPath;
+        static string savePath;
+        static string storyPath;
 
         // Events to listen to.
-        public event Action<Choices> OnChoices;
-        public event Action OnInvalidChoice;
-        public event Action OnDialogueEnd;
-        public event Action<InputCommand> OnInputCommand;
+        public static event Action<Choices> OnChoices;
+        public static event Action OnInvalidChoice;
+        public static event Action OnDialogueEnd;
+        public static event Action<InputCommand> OnInputCommand;
 
-        public DelegateMap CommandDelegates = new DelegateMap();
-        public DelegateMap CharacterDelegates = new DelegateMap();
+        public static DelegateMap CommandDelegates = new DelegateMap();
+        public static DelegateMap CharacterDelegates = new DelegateMap();
 
-        public LineTag Tag = LineTag.None;
+        private static LineTag Tag = LineTag.None;
 
         /// <summary>
         /// Initialize the story, bookmark and internal runner.
         /// This method should only be called once.
         /// </summary>
-        public void Init()
+        public static void Init(string storyPath, string bookmarkPath, string savePath)
         {
 #if UNITY_EDITOR
-            Debug.Log($"Kataru.Init(StoryPath: '{StoryPath}', 'SavePath: {SavePath}')");
+            Debug.Log(
+                $@"Kataru.Init(StoryPath: '{storyPath}', 
+                StoryPath: '{bookmarkPath}', 
+                SavePath: '{savePath}')");
 #endif
-            FFI.LoadStory(StoryPath);
-            FFI.LoadBookmark(BookmarkPath);
+            Runner.storyPath = storyPath;
+            Runner.bookmarkPath = bookmarkPath;
+            Runner.savePath = savePath;
+
+            FFI.LoadStory(storyPath);
+            FFI.LoadBookmark(bookmarkPath);
             FFI.Validate();
             FFI.InitRunner();
         }
@@ -50,47 +51,47 @@ namespace Kataru
         /// <summary>
         /// Save the bookmark to path.
         /// </summary>
-        public void Save()
+        public static void Save()
         {
 #if UNITY_EDITOR
-            Debug.Log($"Kataru.Save('{SavePath}')");
+            Debug.Log($"Kataru.Save('{savePath}')");
 #endif
-            FFI.SaveBookmark(SavePath);
-        }
-
-        public bool SaveExists()
-        {
-            return File.Exists(SavePath);
-        }
-
-        public void DeleteSave()
-        {
-            File.Delete(SavePath);
+            FFI.SaveBookmark(savePath);
         }
 
         /// <summary>
-        /// /// Load bookmark from path.
+        /// Returns true if a save file exists.
         /// </summary>
-        public void Load()
+        public static bool SaveExists() => File.Exists(savePath);
+
+        /// <summary>
+        /// Deletes the save file.
+        /// </summary>
+        public static void DeleteSave() => File.Delete(savePath);
+
+        /// <summary>
+        /// /// Load bookmark from the save path path.
+        /// </summary>
+        public static void Load()
         {
-            FFI.LoadBookmark(SavePath);
+            FFI.LoadBookmark(savePath);
             FFI.InitRunner();
         }
 
-        public void SaveSnapshot(string name) => FFI.SaveSnapshot(name);
-        public void LoadSnapshot(string name) => FFI.LoadSnapshot(name);
-        public void SetLine(int line) => FFI.SetLine(line);
-        public void GotoPassage(string passage) => FFI.GotoPassage(passage);
-        public void SetState(string key, string value) => FFI.SetState(key, value);
-        public void SetState(string key, double value) => FFI.SetState(key, value);
-        public void SetState(string key, bool value) => FFI.SetState(key, value);
-        public string GetPassage() => FFI.GetPassage();
+        public static void SaveSnapshot(string name) => FFI.SaveSnapshot(name);
+        public static void LoadSnapshot(string name) => FFI.LoadSnapshot(name);
+        public static void SetLine(int line) => FFI.SetLine(line);
+        public static void GotoPassage(string passage) => FFI.GotoPassage(passage);
+        public static void SetState(string key, string value) => FFI.SetState(key, value);
+        public static void SetState(string key, double value) => FFI.SetState(key, value);
+        public static void SetState(string key, bool value) => FFI.SetState(key, value);
+        public static string GetPassage() => FFI.GetPassage();
 
         /// <summary>
         /// Goto a passage and run the first line.
         /// </summary>
         /// <param name="passage"></param>
-        public void RunPassage(string passage)
+        public static void RunPassage(string passage)
         {
             GotoPassage(passage);
             Next();
@@ -100,7 +101,7 @@ namespace Kataru
         /// Goto a passage and run until choices are required.
         /// </summary>
         /// <param name="passage"></param>
-        public void RunPassageUntilChoice(string passage)
+        public static void RunPassageUntilChoice(string passage)
         {
             GotoPassage(passage);
             Next();
@@ -116,7 +117,7 @@ namespace Kataru
         /// This yields line data from internal dialogue runner, whose data is passed via invoking actions.
         /// </summary>
         /// <param name="input"></param>
-        public void Next(string input = "")
+        public static void Next(string input = "")
         {
 #if UNITY_EDITOR
             Debug.Log($"Kataru.Next('" + input + "')");
@@ -171,7 +172,7 @@ namespace Kataru
         /// Must be called using GameObject.StartCoroutine.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator DelayedNext(float seconds, string input = "")
+        public static IEnumerator DelayedNext(float seconds, string input = "")
         {
             yield return new WaitForSeconds(seconds);
             Next(input);

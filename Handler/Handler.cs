@@ -4,7 +4,6 @@ using UnityEngine;
 /*
 The Runner owns dictionary of delegates.
 All annotated functions are added to the delegates.
-When the runner 
 */
 namespace Kataru
 {
@@ -15,8 +14,6 @@ namespace Kataru
     /// </summary>
     public class Handler : Attributed
     {
-        [SerializeField] protected Runner Runner;
-
         // Keep local copies of delegates so they may be removed on Disable.
         protected DelegateMap CommandDelegates = new DelegateMap();
         protected DelegateMap CharacterDelegates = new DelegateMap();
@@ -26,8 +23,6 @@ namespace Kataru
         /// </summary>
         protected virtual void OnEnable()
         {
-            if (Runner == null) throw new NullReferenceException($"Kataru Runner was null for game object '{gameObject.name}'");
-
             Runner.OnChoices += OnChoices;
             Runner.OnDialogueEnd += OnDialogueEnd;
             Runner.OnInvalidChoice += OnInvalidChoice;
