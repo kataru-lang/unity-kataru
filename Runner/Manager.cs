@@ -27,7 +27,7 @@ namespace Kataru
             absoluteSavePath = Path.Combine(Application.persistentDataPath, savePath);
         }
 
-        protected virtual void Start()
+        protected virtual void Awake()
         {
             if (initialized) Debug.LogError(@"A Kataru Manager was already initialized.
                 You should only have one Kataru Manager in your scene.");
