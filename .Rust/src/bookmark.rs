@@ -49,7 +49,7 @@ fn try_set_state(key: &str, value: Value) -> Result<()> {
                 return Ok(());
             }
 
-            let root_state = bookmark.root_state()?;
+            let root_state = bookmark.global_state()?;
             if let Some(var) = root_state.get_mut(key) {
                 *var = value;
                 return Ok(());
