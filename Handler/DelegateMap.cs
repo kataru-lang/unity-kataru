@@ -43,7 +43,8 @@ namespace Kataru
                     }
                     catch (System.Reflection.TargetInvocationException e)
                     {
-                        Debug.LogError($"Error calling '{name}': {e.InnerException}");
+                        Debug.LogError($"Error calling '{name}'.");
+                        throw e.InnerException;
                     }
                     catch (Exception e)
                     {

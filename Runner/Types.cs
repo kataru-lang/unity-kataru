@@ -9,7 +9,7 @@ namespace Kataru
         InvalidChoice,
         Dialogue,
         InputCommand,
-        Commands,
+        Command,
         None,
     }
 

@@ -26,6 +26,7 @@ namespace Kataru
         public static DelegateMap CharacterDelegates = new DelegateMap();
 
         private static LineTag Tag = LineTag.None;
+        private static bool isWaiting = false;
 
         /// <summary>
         /// Initialize the story, bookmark and internal runner.
@@ -111,7 +112,7 @@ namespace Kataru
             GotoPassage(passage);
             Next();
 
-            while (Tag == LineTag.Dialogue || Tag == LineTag.Commands)
+            while (Tag == LineTag.Dialogue || Tag == LineTag.Command)
             {
                 Next();
             }
@@ -120,13 +121,24 @@ namespace Kataru
         /// <summary>
         /// Progress the story using the given input.
         /// This yields line data from internal dialogue runner, whose data is passed via invoking actions.
+        /// If delayed next was called previously, this runner is current waiting for that to finish and won't run the next line.
         /// </summary>
         /// <param name="input"></param>
         public static void Next(string input = "")
         {
 #if UNITY_EDITOR
-            Debug.Log($"Kataru.Next('" + input + "')");
+            string caller = (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name;
+            Debug.Log($"Kataru.Next('{input}') from {caller}.");
 #endif
+            if (isWaiting)
+            {
+#if UNITY_EDITOR
+                Debug.LogWarning($@"Called Runner.Next while runner was busy waiting.
+                                    Don't call Runner.Next until Runner.DelayedNext has finished.");
+#endif
+                return;
+            }
+
             FFI.Next(input);
             Tag = FFI.Tag();
             Debug.Log($"Tag: {Tag}");
@@ -147,7 +159,7 @@ namespace Kataru
                     CharacterDelegates.Invoke(dialogue.name, new object[] { dialogue });
                     break;
 
-                case LineTag.Commands:
+                case LineTag.Command:
                     Command command = FFI.LoadCommand();
                     Debug.Log($"Calling command {command.name}");
                     ConcurrentDictionary<Delegate, byte> delegates;
@@ -184,7 +196,24 @@ namespace Kataru
         /// <returns></returns>
         public static IEnumerator DelayedNext(float seconds, string input = "")
         {
+            isWaiting = true;
             yield return new WaitForSeconds(seconds);
+
+            isWaiting = false;
+            Next(input);
+        }
+
+        /// <summary>
+        /// Calls next after waiting a bit.
+        /// Must be called using GameObject.StartCoroutine.
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerator DelayedNext(Func<bool> predicate, string input = "")
+        {
+            isWaiting = true;
+            yield return new WaitUntil(predicate);
+
+            isWaiting = false;
             Next(input);
         }
     }
