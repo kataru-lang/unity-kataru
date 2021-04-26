@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEditor;
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -10,11 +11,13 @@ namespace Kataru
     /// <summary>
     /// The Kataru Runner serves as the high level interface with the Kataru Rust FFI module.
     /// </summary>
+    [InitializeOnLoad]
     public static class Runner
     {
-        static string bookmarkPath;
-        static string savePath;
-        static string storyPath;
+        [SerializeField] private static string storyPath;
+        [SerializeField] private static string targetPath;
+        [SerializeField] private static string bookmarkPath;
+        [SerializeField] private static string savePath;
 
         // Events to listen to.
         public static event Action<Choices> OnChoices;
@@ -28,33 +31,48 @@ namespace Kataru
         private static LineTag Tag = LineTag.None;
         private static bool isWaiting = false;
 
+
         /// <summary>
         /// Initialize the story, bookmark and internal runner.
         /// This method should only be called once.
         /// </summary>
-        public static void Init(string storyPath, string bookmarkPath, string savePath)
+        public static void Init()
         {
+            var settings = KataruSettings.Get(createIfMissing: true);
+            targetPath = Application.dataPath + "/" + settings.targetPath;
+            bookmarkPath = Application.dataPath + "/" + settings.bookmarkPath;
+            savePath = Application.persistentDataPath + "/" + settings.savePath;
+            storyPath = Application.dataPath + "/" + settings.storyPath;
+
 #if UNITY_EDITOR
             Debug.Log(
-                $@"Kataru.Init(StoryPath: '{storyPath}', 
-                StoryPath: '{bookmarkPath}', 
+                    $@"Kataru.Init(StoryPath: '{targetPath}', 
+                BookmarkPath: '{bookmarkPath}', 
                 SavePath: '{savePath}')");
-#endif
-            Runner.storyPath = storyPath;
-            Runner.bookmarkPath = bookmarkPath;
-            Runner.savePath = savePath;
 
-            FFI.LoadStory(storyPath);
-            FFI.LoadBookmark(bookmarkPath);
-            FFI.Validate();
-            FFI.InitRunner();
+            if (!File.Exists(targetPath))
+            {
+                Debug.LogWarning("Missing target. Retriggering compilation...");
+                Compile(storyPath, bookmarkPath, targetPath);
+            }
+#endif
+            // Only load the story on Init.
+            FFI.LoadStory(targetPath);
+
+            // Perform rest of loading (bookmark, initialize runner).
+            Load();
         }
 
         /// <summary>
-        /// Save the bookmark to path.
+        /// Save the bookmark to save path.
         /// </summary>
         public static void Save()
         {
+            var parent = Directory.GetParent(savePath);
+            if (!parent.Exists)
+            {
+                parent.Create();
+            }
 #if UNITY_EDITOR
             Debug.Log($"Kataru.Save('{savePath}')");
 #endif
@@ -80,7 +98,16 @@ namespace Kataru
         /// </summary>
         public static void Load()
         {
-            FFI.LoadBookmark(savePath);
+            if (SaveExists())
+            {
+                FFI.LoadBookmark(savePath);
+            }
+            else
+            {
+                FFI.LoadBookmark(bookmarkPath);
+            }
+
+            Debug.Log("Initializing runner...");
             FFI.InitRunner();
         }
 
@@ -141,7 +168,9 @@ namespace Kataru
 
             FFI.Next(input);
             Tag = FFI.Tag();
+#if UNITY_EDITOR
             Debug.Log($"Tag: {Tag}");
+#endif
             switch (Tag)
             {
                 case LineTag.Choices:
@@ -149,13 +178,14 @@ namespace Kataru
                     break;
 
                 case LineTag.InvalidChoice:
-                    Debug.LogError("Invalid choice");
                     OnInvalidChoice.Invoke();
                     break;
 
                 case LineTag.Dialogue:
                     Dialogue dialogue = FFI.LoadDialogue();
+#if UNITY_EDITOR
                     Debug.Log($"{dialogue.name}: '{dialogue.text}'");
+#endif
                     CharacterDelegates.Invoke(dialogue.name, new object[] { dialogue });
                     break;
 
@@ -216,5 +246,24 @@ namespace Kataru
             isWaiting = false;
             Next(input);
         }
+
+#if UNITY_EDITOR
+        public static void Compile(string storyPath, string bookmarkPath, string targetPath)
+        {
+            try
+            {
+                FFI.LoadStory(storyPath);
+                FFI.LoadBookmark(bookmarkPath);
+                FFI.Validate();
+
+                Debug.Log($"Story at '{storyPath}' validated. Saving compiled story to '{targetPath}'.");
+                FFI.SaveStory(targetPath);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Kataru error: {e.Message}");
+            }
+        }
+#endif
     }
 }

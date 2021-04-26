@@ -12,7 +12,7 @@ pub static mut LINE: Option<&Line> = None;
 // For stories.
 fn try_load_story(path: &str) -> Result<()> {
     unsafe {
-        STORY = Some(Story::load_yml(path)?);
+        STORY = Some(Story::load(path)?);
         Ok(())
     }
 }
@@ -25,7 +25,7 @@ fn try_save_story(path: &str) -> Result<()> {
     unsafe {
         match &STORY {
             Some(story) => story.save(path),
-            None => Err(error!("Bookmark was None.")),
+            None => Err(error!("Story was None.")),
         }
     }
 }
