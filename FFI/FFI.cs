@@ -88,6 +88,14 @@ namespace Kataru
         }
 
         [DllImport("kataru_ffi")]
+        static extern FFIStr save_story(byte[] path, UIntPtr length);
+        public static void SaveStory(string path)
+        {
+            var bytes = Encoding.UTF8.GetBytes(path);
+            save_story(bytes, (UIntPtr)bytes.Length).ThrowIfError();
+        }
+
+        [DllImport("kataru_ffi")]
         static extern FFIStr init_runner();
         public static void InitRunner() =>
             init_runner().ThrowIfError();
