@@ -97,8 +97,8 @@ pub extern "C" fn tag() -> LineTag {
 fn try_goto_passage(passage: &str) -> Result<()> {
     unsafe {
         if let Some(runner) = RUNNER.as_mut() {
-            runner.bookmark.position.passage = passage.to_string();
-            runner.bookmark.position.line = 0;
+            runner.bookmark.set_passage(passage.to_string());
+            runner.bookmark.set_line(0);
             runner.bookmark.stack.clear();
             runner.goto()?;
             Ok(())

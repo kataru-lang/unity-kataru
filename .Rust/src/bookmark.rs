@@ -85,7 +85,7 @@ pub extern "C" fn set_state_bool(key: *const c_char, length: usize, value: bool)
 pub extern "C" fn get_passage() -> FFIStr {
     unsafe {
         if let Some(bookmark) = &BOOKMARK {
-            FFIStr::from(&bookmark.position.passage)
+            FFIStr::from(bookmark.passage())
         } else {
             FFIStr::from("")
         }
@@ -95,7 +95,7 @@ pub extern "C" fn get_passage() -> FFIStr {
 fn try_set_line(line: usize) -> Result<()> {
     unsafe {
         if let Some(bookmark) = BOOKMARK.as_mut() {
-            bookmark.position.line = line;
+            bookmark.set_line(line);
             Ok(())
         } else {
             Err(error!("Bookmark was None."))
