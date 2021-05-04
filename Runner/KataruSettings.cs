@@ -1,12 +1,14 @@
 using System.IO;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Kataru
 {
     // Create a new type of Settings Asset.
-    class KataruSettings : ScriptableObject
+    public class KataruSettings : ScriptableObject
     {
         const string SettingsDirectory = "Assets/Kataru";
         const string SettingsFile = "Assets/Kataru/KataruSettings.asset";
@@ -28,6 +30,7 @@ namespace Kataru
             return instance;
         }
 
+#if UNITY_EDITOR
         internal static KataruSettings Load(bool createIfMissing = false)
         {
             var settings = AssetDatabase.LoadAssetAtPath<KataruSettings>(SettingsFile);
@@ -49,6 +52,7 @@ namespace Kataru
             }
             return settings;
         }
+#endif
         // private void OnEnable()
         // {
         //     if (instance == null) instance = Load();
@@ -66,8 +70,9 @@ namespace Kataru
         // }
     }
 
+#if UNITY_EDITOR
     // Create KataruSettingsProvider by deriving from SettingsProvider:
-    class KataruSettingsProvider : SettingsProvider
+    public class KataruSettingsProvider : SettingsProvider
     {
         // private KataruSettings settings;
         private SerializedObject serializedSettings;
@@ -80,9 +85,10 @@ namespace Kataru
             public static GUIContent savePath = new GUIContent("Save Path");
         }
 
+#if UNITY_EDITOR
         public KataruSettingsProvider(string path, SettingsScope scope = SettingsScope.Project)
             : base(path, scope) { }
-
+#endif
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
             Debug.LogWarning("OnActivate");
@@ -132,4 +138,5 @@ namespace Kataru
             return provider;
         }
     }
+#endif
 }

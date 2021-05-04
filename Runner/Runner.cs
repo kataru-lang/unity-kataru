@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -11,7 +13,9 @@ namespace Kataru
     /// <summary>
     /// The Kataru Runner serves as the high level interface with the Kataru Rust FFI module.
     /// </summary>
+#if UNITY_EDITOR
     [InitializeOnLoad]
+#endif
     public static class Runner
     {
         [SerializeField] private static string storyPath;

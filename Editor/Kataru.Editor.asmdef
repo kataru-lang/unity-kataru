@@ -1,0 +1,18 @@
+{
+    "name": "Kataru.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4b9e1eabf59181b4299d0ef5ec0199af"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
