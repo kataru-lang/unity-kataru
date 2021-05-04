@@ -43,12 +43,10 @@ namespace Kataru
         public static void Init()
         {
             var settings = KataruSettings.Get(createIfMissing: true);
-            targetPath = Application.dataPath + "/" + settings.targetPath;
-            bookmarkPath = Application.dataPath + "/" + settings.bookmarkPath;
+            targetPath = Application.streamingAssetsPath + "/" + settings.targetPath;
+            bookmarkPath = Application.streamingAssetsPath + "/" + settings.bookmarkPath;
             savePath = Application.persistentDataPath + "/" + settings.savePath;
-            storyPath = Application.dataPath + "/" + settings.storyPath;
 
-#if UNITY_EDITOR
             Debug.Log(
                     $@"Kataru.Init(StoryPath: '{targetPath}', 
                 BookmarkPath: '{bookmarkPath}', 
@@ -57,9 +55,11 @@ namespace Kataru
             if (!File.Exists(targetPath))
             {
                 Debug.LogWarning("Missing target. Retriggering compilation...");
+#if UNITY_EDITOR
+                storyPath = Application.dataPath + "/" + settings.storyPath;
                 Compile(storyPath, bookmarkPath, targetPath);
-            }
 #endif
+            }
             // Only load the story on Init.
             FFI.LoadStory(targetPath);
 
@@ -254,6 +254,7 @@ namespace Kataru
 #if UNITY_EDITOR
         public static void Compile(string storyPath, string bookmarkPath, string targetPath)
         {
+            Debug.Log($@"Runner.Compile(storyPath: '{storyPath}' bookmarkPath: '{bookmarkPath}' targetPath: '{targetPath}')");
             try
             {
                 FFI.LoadStory(storyPath);

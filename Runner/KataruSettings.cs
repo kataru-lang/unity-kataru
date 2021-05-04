@@ -11,14 +11,19 @@ namespace Kataru
     public class KataruSettings : ScriptableObject
     {
         const string SettingsDirectory = "Assets/Kataru";
-        const string SettingsFile = "Assets/Kataru/KataruSettings.asset";
+        const string SettingsFile = "Kataru Settings";
 
         [SerializeField]
         public string storyPath;
+
         [SerializeField]
+        [Tooltip("File path of bookmark relative to StreamingAssets folder")]
         public string bookmarkPath;
+
         [SerializeField]
+        [Tooltip("File name of compiled Kataru relative to StreamingAssets folder")]
         public string targetPath;
+
         [SerializeField]
         public string savePath;
 
@@ -30,10 +35,11 @@ namespace Kataru
             return instance;
         }
 
-#if UNITY_EDITOR
         internal static KataruSettings Load(bool createIfMissing = false)
         {
-            var settings = AssetDatabase.LoadAssetAtPath<KataruSettings>(SettingsFile);
+            KataruSettings settings = Resources.Load<KataruSettings>(SettingsFile);
+            Debug.Log($@"KataruSettings.Load(SettingsFile: '{SettingsFile}')");
+#if UNITY_EDITOR
             if (createIfMissing && settings == null)
             {
                 Debug.LogWarning($"Could not find settings at '{SettingsFile}', creating defaults...");
@@ -47,12 +53,13 @@ namespace Kataru
                 settings.bookmarkPath = "Kataru/Bookmark.yml";
                 settings.targetPath = "Kataru/story.bin";
                 settings.savePath = "Kataru/bookmark.bin";
-                AssetDatabase.CreateAsset(settings, SettingsFile);
+                AssetDatabase.CreateAsset(settings, SettingsDirectory + "/Resources/" + SettingsFile);
                 AssetDatabase.SaveAssets();
             }
+#endif
             return settings;
         }
-#endif
+
         // private void OnEnable()
         // {
         //     if (instance == null) instance = Load();

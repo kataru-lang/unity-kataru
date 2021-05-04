@@ -21,8 +21,8 @@ namespace Kataru
             if (settings == null) return;
 
             storyPath = "Assets/" + settings.storyPath;
-            bookmarkPath = "Assets/" + settings.bookmarkPath;
-            targetPath = "Assets/" + settings.targetPath;
+            bookmarkPath = "Assets/StreamingAssets/" + settings.bookmarkPath;
+            targetPath = "Assets/StreamingAssets/" + settings.targetPath;
 
             if (!KataruWasModified(changedAssets, addedAssets, deletedAssets, movedAssets))
             {
