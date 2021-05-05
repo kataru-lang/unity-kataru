@@ -33,6 +33,7 @@ namespace Kataru
         public static DelegateMap CharacterDelegates = new DelegateMap();
 
         private static LineTag Tag = LineTag.None;
+        public static bool isRunning = false;
         private static bool isWaiting = false;
 
 
@@ -130,6 +131,7 @@ namespace Kataru
         /// <param name="passage"></param>
         public static void RunPassage(string passage)
         {
+            isRunning = true;
             GotoPassage(passage);
             Next();
         }
@@ -140,8 +142,7 @@ namespace Kataru
         /// <param name="passage"></param>
         public static void RunPassageUntilChoice(string passage)
         {
-            GotoPassage(passage);
-            Next();
+            RunPassage(passage);
 
             while (Tag == LineTag.Dialogue || Tag == LineTag.Command)
             {
@@ -195,7 +196,9 @@ namespace Kataru
 
                 case LineTag.Command:
                     Command command = FFI.LoadCommand();
+#if UNITY_EDITOR
                     Debug.Log($"Calling command {command.name}");
+#endif
                     ConcurrentDictionary<Delegate, byte> delegates;
                     if (CommandDelegates.TryGetValue(command.name, out delegates))
                     {
@@ -218,6 +221,7 @@ namespace Kataru
                     break;
 
                 case LineTag.None:
+                    isRunning = false;
                     OnDialogueEnd.Invoke();
                     break;
             }
