@@ -63,9 +63,6 @@ namespace Kataru
             }
             // Only load the story on Init.
             FFI.LoadStory(targetPath);
-
-            // Perform rest of loading (bookmark, initialize runner).
-            Load();
         }
 
         /// <summary>
@@ -99,7 +96,8 @@ namespace Kataru
         }
 
         /// <summary>
-        /// /// Load bookmark from the save path path.
+        /// Load bookmark from the save path path.
+        /// Call this when wanting to load save file.
         /// </summary>
         public static void Load()
         {
