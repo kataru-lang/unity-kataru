@@ -24,6 +24,7 @@ namespace Kataru
         [SerializeField] private static string savePath;
 
         // Events to listen to.
+        public static event Action<LineTag> OnLine;
         public static event Action<Choices> OnChoices;
         public static event Action OnInvalidChoice;
         public static event Action OnDialogueEnd;
@@ -146,6 +147,8 @@ namespace Kataru
             {
                 Next();
             }
+
+            Exit();
         }
 
         /// <summary>
@@ -154,7 +157,7 @@ namespace Kataru
         /// If delayed next was called previously, this runner is current waiting for that to finish and won't run the next line.
         /// </summary>
         /// <param name="input"></param>
-        public static void Next(string input = "")
+        public static LineTag Next(string input = "")
         {
 #if UNITY_EDITOR
             string caller = (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name;
@@ -166,7 +169,7 @@ namespace Kataru
                 Debug.LogWarning($@"Called Runner.Next while runner was busy waiting.
                                     Don't call Runner.Next until Runner.DelayedNext has finished.");
 #endif
-                return;
+                return LineTag.None;
             }
 
             FFI.Next(input);
@@ -219,10 +222,21 @@ namespace Kataru
                     break;
 
                 case LineTag.None:
-                    isRunning = false;
-                    OnDialogueEnd.Invoke();
+                    Exit();
                     break;
             }
+            OnLine?.Invoke(Tag);
+            return Tag;
+        }
+
+        /// <summary>
+        /// Exit out of the current passage. 
+        /// Can be used to forcibly exit out of a running, incompleted passage.
+        /// </summary>
+        public static void Exit()
+        {
+            isRunning = false;
+            OnDialogueEnd.Invoke();
         }
 
         /// <summary>
