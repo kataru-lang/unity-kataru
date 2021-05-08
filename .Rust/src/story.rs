@@ -7,7 +7,7 @@ use std::os::raw::c_char;
 
 pub static mut STORY: Option<Story> = None;
 pub static mut RUNNER: Option<Runner> = None;
-pub static mut LINE: Option<&Line> = None;
+pub static mut LINE: Line = Line::End;
 
 // For stories.
 fn try_load_story(path: &str) -> Result<()> {
@@ -76,7 +76,7 @@ pub extern "C" fn validate() -> FFIStr {
 fn try_next(input: &str) -> Result<()> {
     unsafe {
         if let Some(runner) = RUNNER.as_mut() {
-            LINE = Some(runner.next(input)?);
+            LINE = runner.next(input)?;
             Ok(())
         } else {
             Err(error!("Runner was not initialized."))

@@ -127,7 +127,7 @@ dependencies = [
 [[package]]
 name = "kataru"
 version = "0.1.0"
-source = "git+https://github.com/Katsutoshii/kataru.git?branch=main#38ab6eac5f28ba7c4f05df27906f96dfa739004c"
+source = "git+https://github.com/Katsutoshii/kataru.git?branch=main#a89d547a4f98dcfdc989e61fa84f5f92675c6602"
 dependencies = [
  "bincode",
  "colored",

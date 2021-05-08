@@ -33,7 +33,7 @@ namespace Kataru
         public static DelegateMap CommandDelegates = new DelegateMap();
         public static DelegateMap CharacterDelegates = new DelegateMap();
 
-        private static LineTag Tag = LineTag.None;
+        private static LineTag Tag = LineTag.End;
         public static bool isRunning = false;
         private static bool isWaiting = false;
 
@@ -169,7 +169,7 @@ namespace Kataru
                 Debug.LogWarning($@"Called Runner.Next while runner was busy waiting.
                                     Don't call Runner.Next until Runner.DelayedNext has finished.");
 #endif
-                return LineTag.None;
+                return LineTag.End;
             }
 
             FFI.Next(input);
@@ -221,7 +221,7 @@ namespace Kataru
                     OnInputCommand.Invoke(FFI.LoadInputCommand());
                     break;
 
-                case LineTag.None:
+                case LineTag.End:
                     Exit();
                     break;
             }

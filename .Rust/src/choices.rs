@@ -9,10 +9,10 @@ static mut CHOICES: Vec<FFIStr> = Vec::new();
 #[no_mangle]
 pub extern "C" fn get_choices() -> usize {
     unsafe {
-        if let Some(Line::Choices(choices)) = &LINE {
-            CHOICES = Vec::new();
+        if let Line::Choices(choices) = &LINE {
+            CHOICES.clear();
             CHOICES.reserve(choices.choices.len());
-            for (choice, _target) in &choices.choices {
+            for choice in choices {
                 CHOICES.push(FFIStr::from(choice));
             }
             choices.choices.len()
@@ -30,7 +30,7 @@ pub extern "C" fn get_choice(i: usize) -> FFIStr {
 #[no_mangle]
 pub extern "C" fn get_timeout() -> f64 {
     unsafe {
-        if let Some(Line::Choices(choices)) = &LINE {
+        if let Line::Choices(choices) = &LINE {
             choices.timeout
         } else {
             0.0

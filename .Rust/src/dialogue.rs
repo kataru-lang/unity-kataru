@@ -11,7 +11,7 @@ static mut ATTRIBUTE_POS: Vec<FFIArray> = Vec::new();
 #[no_mangle]
 pub extern "C" fn get_speaker() -> FFIStr {
     unsafe {
-        if let Some(Line::Dialogue(dialogue)) = &LINE {
+        if let Line::Dialogue(dialogue) = &LINE {
             FFIStr::from(&dialogue.name)
         } else {
             FFIStr::from("")
@@ -22,7 +22,7 @@ pub extern "C" fn get_speaker() -> FFIStr {
 #[no_mangle]
 pub extern "C" fn get_speech() -> FFIStr {
     unsafe {
-        if let Some(Line::Dialogue(dialogue)) = &LINE {
+        if let Line::Dialogue(dialogue) = &LINE {
             FFIStr::from(&dialogue.text)
         } else {
             FFIStr::from("")
@@ -33,7 +33,7 @@ pub extern "C" fn get_speech() -> FFIStr {
 #[no_mangle]
 pub extern "C" fn get_attributes() -> usize {
     unsafe {
-        if let Some(Line::Dialogue(dialogue)) = &LINE {
+        if let Line::Dialogue(dialogue) = &LINE {
             ATTRIBUTES.clear();
             ATTRIBUTES.reserve(dialogue.attributes.len());
             ATTRIBUTE_POS_I32.clear();

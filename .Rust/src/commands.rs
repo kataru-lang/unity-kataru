@@ -17,10 +17,8 @@ static mut VALUES: Vec<Value> = Vec::new();
 #[no_mangle]
 pub extern "C" fn get_command() -> FFIStr {
     unsafe {
-        if let Some(Line::Command(command)) = &LINE {
-            for (command_name, _params) in command {
-                return FFIStr::from(command_name);
-            }
+        if let Line::Command(command) = &LINE {
+            return FFIStr::from(&command.name);
         }
         FFIStr::from("")
     }
@@ -29,19 +27,16 @@ pub extern "C" fn get_command() -> FFIStr {
 #[no_mangle]
 pub extern "C" fn get_params() -> usize {
     unsafe {
-        if let Some(Line::Command(cmd)) = &LINE {
-            for (_cmd_name, params) in cmd {
-                PARAMS = Vec::new();
-                PARAMS.reserve(params.len());
-                VALUES = Vec::new();
-                VALUES.reserve(params.len());
-                for (param, value) in params {
-                    PARAMS.push(FFIStr::from(param));
-                    VALUES.push(value.clone());
-                }
-                return params.len();
+        if let Line::Command(command) = &LINE {
+            PARAMS = Vec::new();
+            PARAMS.reserve(command.params.len());
+            VALUES = Vec::new();
+            VALUES.reserve(command.params.len());
+            for (param, value) in &command.params {
+                PARAMS.push(FFIStr::from(param));
+                VALUES.push(value.clone());
             }
-            0
+            return command.params.len();
         } else {
             0
         }

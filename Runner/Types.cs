@@ -10,7 +10,7 @@ namespace Kataru
         Dialogue,
         InputCommand,
         Command,
-        None,
+        End,
     }
 
     public enum ParamType
