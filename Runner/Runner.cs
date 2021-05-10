@@ -218,7 +218,7 @@ namespace Kataru
                     break;
 
                 case LineTag.InputCommand:
-                    OnInputCommand.Invoke(FFI.LoadInputCommand());
+                    OnInputCommand?.Invoke(FFI.LoadInputCommand());
                     break;
 
                 case LineTag.End:
