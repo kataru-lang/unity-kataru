@@ -4,7 +4,7 @@
 
 ![rust workflow](https://github.com/katsutoshii/kataru/actions/workflows/rust.yml/badge.svg)
 
-Kataru 「カタル」is a system for interactive dialogue based on YAML, parsed in Rust. 
+[Kataru 「カタル」](https://github.com/kataru-lang/kataru) is a system for interactive dialogue based on YAML, parsed in Rust. 
 
 Unity-Kataru packages it nicely with scripts that make it possible to use in Unity.
 
