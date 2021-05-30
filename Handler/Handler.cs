@@ -29,14 +29,14 @@ namespace Kataru
 
             foreach (var namedDelegate in GetActionsForAttribute<CommandHandler>())
             {
-                CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
-                Runner.CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
+                CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate, namedDelegate.autoNext);
+                Runner.CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate, namedDelegate.autoNext);
             }
 
             foreach (var namedDelegate in GetActionsForAttribute<CharacterHandler>())
             {
-                CharacterDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
-                Runner.CharacterDelegates.Add(namedDelegate.name, namedDelegate.@delegate);
+                CharacterDelegates.Add(namedDelegate.name, namedDelegate.@delegate, namedDelegate.autoNext);
+                Runner.CharacterDelegates.Add(namedDelegate.name, namedDelegate.@delegate, namedDelegate.autoNext);
             }
         }
 

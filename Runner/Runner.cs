@@ -157,11 +157,11 @@ namespace Kataru
         /// If delayed next was called previously, this runner is current waiting for that to finish and won't run the next line.
         /// </summary>
         /// <param name="input"></param>
-        public static LineTag Next(string input = "")
+        public static LineTag Next(string input = "", bool auto = false)
         {
 #if UNITY_EDITOR
-            string caller = (new System.Diagnostics.StackTrace()).GetFrame(1).GetMethod().Name;
-            Debug.Log($"Kataru.Next('{input}') from {caller}.");
+            string caller = (new System.Diagnostics.StackTrace()).GetFrame(auto ? 2 : 1).GetMethod().Name;
+            Debug.Log($"Kataru.Runner.Next('{input}') from {caller}.");
 #endif
             if (isWaiting)
             {
@@ -200,7 +200,7 @@ namespace Kataru
 #if UNITY_EDITOR
                     Debug.Log($"Calling command {command.name}");
 #endif
-                    ConcurrentDictionary<Delegate, byte> delegates;
+                    ConcurrentDictionary<Delegate, bool> delegates;
                     if (CommandDelegates.TryGetValue(command.name, out delegates))
                     {
                         object[] @params = new object[] { };

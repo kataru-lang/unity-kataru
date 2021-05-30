@@ -7,39 +7,47 @@ namespace Kataru
 {
     /// <summary>
     /// </summary>
-    public class DelegateMap : Dictionary<string, ConcurrentDictionary<Delegate, byte>>
+    public class DelegateMap : Dictionary<string, ConcurrentDictionary<Delegate, bool>>
     {
 
-        public void Add(string name, Delegate @delegate)
+        public void Add(string name, Delegate @delegate, bool autoNext)
         {
             if (!ContainsKey(name))
             {
-                this[name] = new ConcurrentDictionary<Delegate, byte>();
+                this[name] = new ConcurrentDictionary<Delegate, bool>();
             }
 
-            this[name].TryAdd(@delegate, 0);
+            this[name].TryAdd(@delegate, autoNext);
         }
 
         public void Remove(string name, Delegate @delegate)
         {
-            ConcurrentDictionary<Delegate, byte> delegates;
+            ConcurrentDictionary<Delegate, bool> delegates;
             if (TryGetValue(name, out delegates))
             {
-                byte removed;
+                bool removed;
                 delegates.TryRemove(@delegate, out removed);
             }
         }
 
         public void Invoke(string name, object[] args)
         {
-            ConcurrentDictionary<Delegate, byte> delegates;
+            ConcurrentDictionary<Delegate, bool> delegates;
             if (TryGetValue(name, out delegates))
             {
-                foreach (var @delegate in delegates.Keys)
+                foreach (var pair in delegates)
                 {
+                    bool autoNext = pair.Value;
+                    Delegate @delegate = pair.Key;
+
                     try
                     {
                         @delegate.DynamicInvoke(args);
+                        if (autoNext)
+                        {
+                            Debug.Log($"AutoNext from '{name}'");
+                            Runner.Next(auto: true);
+                        }
                     }
                     catch (System.Reflection.TargetInvocationException e)
                     {

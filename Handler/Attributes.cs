@@ -14,11 +14,18 @@ namespace Kataru
         public string Name { get; }
         public bool Prefixed { get; }
         public bool PrefixOnly { get; }
-        public NamedAttribute(string name, bool prefixed = false, bool prefixOnly = false)
+        public bool AutoNext { get; }
+
+        public NamedAttribute(
+            string name,
+            bool prefixed = false,
+            bool prefixOnly = false,
+            bool autoNext = true)
         {
             Name = name;
             Prefixed = prefixed;
             PrefixOnly = prefixOnly;
+            AutoNext = autoNext;
         }
     }
 
@@ -29,7 +36,14 @@ namespace Kataru
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class CommandHandler : NamedAttribute
     {
-        public CommandHandler(string name = "", bool local = false) : base(name, prefixed: local) { }
+        public CommandHandler(
+            string name = "",
+            bool autoNext = true,
+            bool local = false) : base(
+                name,
+                prefixed: local,
+                autoNext: autoNext)
+        { }
     }
 
     /// <summary>
@@ -39,7 +53,11 @@ namespace Kataru
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = true)]
     public class CharacterHandler : NamedAttribute
     {
-        public CharacterHandler(string name = "") : base(name, prefixOnly: name.Length == 0) { }
+        public CharacterHandler(string name = "", bool autoNext = false) : base(
+            name,
+            prefixOnly: name.Length == 0,
+            autoNext: autoNext)
+        { }
     }
 
     public static class ReflectionUtils
@@ -63,6 +81,7 @@ namespace Kataru
         {
             public string name;
             public Delegate @delegate;
+            public bool autoNext;
         }
 
         /// <summary>
@@ -109,7 +128,8 @@ namespace Kataru
                     yield return new NamedDelegate
                     {
                         name = name,
-                        @delegate = methodInfo.CreateDelegate(this)
+                        @delegate = methodInfo.CreateDelegate(this),
+                        autoNext = attribute.AutoNext
                     };
                 }
             }
