@@ -35,19 +35,16 @@ namespace Kataru
             ConcurrentDictionary<Delegate, bool> delegates;
             if (TryGetValue(name, out delegates))
             {
+                bool autoNext = true;
                 foreach (var pair in delegates)
                 {
-                    bool autoNext = pair.Value;
+                    autoNext &= pair.Value;
                     Delegate @delegate = pair.Key;
 
                     try
                     {
+                        Debug.Log($"Del name: '{@delegate.Method.Name}'");
                         @delegate.DynamicInvoke(args);
-                        if (autoNext)
-                        {
-                            Debug.Log($"AutoNext from '{name}'");
-                            Runner.Next(auto: true);
-                        }
                     }
                     catch (System.Reflection.TargetInvocationException e)
                     {
@@ -58,6 +55,11 @@ namespace Kataru
                     {
                         Debug.LogError($"Error calling '{name}'. Make sure all listener arguments match the definition in Kataru: {e}");
                     }
+                }
+                if (autoNext)
+                {
+                    Debug.Log($"AutoNext from '{name}'");
+                    Runner.Next(auto: true);
                 }
             }
             else

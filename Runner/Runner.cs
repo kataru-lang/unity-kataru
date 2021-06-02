@@ -213,7 +213,7 @@ namespace Kataru
                     }
                     else
                     {
-                        throw new KeyNotFoundException($"No Kataru command named '{command.name}'");
+                        throw new KeyNotFoundException($"No Kataru command named '{command.name}' was registered in Unity. Are you missing a command definition, attribute, or reference?");
                     }
                     break;
 
