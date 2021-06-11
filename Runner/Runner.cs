@@ -198,7 +198,11 @@ namespace Kataru
                 case LineTag.Command:
                     Command command = FFI.LoadCommand();
 #if UNITY_EDITOR
-                    Debug.Log($"Calling command {command.name}");
+                    Debug.Log($"Calling command '{command.name}'");
+                    if (string.IsNullOrEmpty(command.name))
+                    {
+                        throw new KeyNotFoundException($"Received empty Kataru command. Did you use a global command as a character command?");
+                    }
 #endif
                     ConcurrentDictionary<Delegate, bool> delegates;
                     if (CommandDelegates.TryGetValue(command.name, out delegates))

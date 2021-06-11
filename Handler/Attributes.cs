@@ -39,9 +39,9 @@ namespace Kataru
         public CommandHandler(
             string name = "",
             bool autoNext = true,
-            bool local = false) : base(
+            bool character = false) : base(
                 name,
-                prefixed: local,
+                prefixed: character,
                 autoNext: autoNext)
         { }
     }
