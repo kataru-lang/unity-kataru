@@ -199,7 +199,7 @@ namespace Kataru
                     break;
 
                 case LineTag.Command:
-                    Command command = FFI.LoadCommand();
+                    Command command = FFI.GetCommand();
 #if UNITY_EDITOR
                     Debug.Log($"Calling command '{command.name}'");
                     if (string.IsNullOrEmpty(command.name))

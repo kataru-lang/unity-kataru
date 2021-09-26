@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Kataru
 {
@@ -148,57 +149,19 @@ namespace Kataru
         }
         #endregion
 
+        [DllImport("kataru_ffi")]
+        static extern FFIStr get_params();
+        static Dictionary<string, object> GetParams()
+        {
+            string json = get_params().ToString();
+            Debug.Log($"Got json: {json}");
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        }
+
         #region Commands
         [DllImport("kataru_ffi")]
         static extern FFIStr get_command();
-        static string GetCommand() => get_command().ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern int get_params();
-        static int GetParams() => (int)get_params();
-
-        [DllImport("kataru_ffi")]
-        static extern FFIStr get_param(UIntPtr i);
-        static string GetParam(int i) => get_param((UIntPtr)i).ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern ParamType get_param_type(UIntPtr i);
-        [DllImport("kataru_ffi")]
-        static extern bool get_param_bool(UIntPtr i);
-        [DllImport("kataru_ffi")]
-        static extern FFIStr get_param_string(UIntPtr i);
-        [DllImport("kataru_ffi")]
-        static extern double get_param_number(UIntPtr i);
-        static object GetParamValue(int i)
-        {
-            UIntPtr u = (UIntPtr)i;
-            ParamType paramType = get_param_type(u);
-            switch (paramType)
-            {
-                case ParamType.Bool:
-                    return get_param_bool(u);
-
-                case ParamType.Number:
-                    return get_param_number(u);
-
-                case ParamType.String:
-                    return get_param_string(u).ToString();
-
-                default:
-                    return null;
-            }
-        }
-
-        public static Command LoadCommand()
-        {
-            var parameters = new Dictionary<string, object>();
-            int numParameters = GetParams();
-            for (int i = 0; i < numParameters; ++i)
-            {
-                parameters[GetParam(i)] = GetParamValue(i);
-            }
-            return new Command() { name = GetCommand(), parameters = parameters };
-        }
+        public static Command GetCommand() => new Command() { name = get_command().ToString(), parameters = GetParams() };
 
         public static InputCommand LoadInputCommand()
         {
