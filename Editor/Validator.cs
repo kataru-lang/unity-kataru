@@ -24,7 +24,7 @@ namespace Kataru
             storyPath = "Assets/" + settings.storyPath;
             bookmarkPath = "Assets/StreamingAssets/" + settings.bookmarkPath;
             targetPath = "Assets/StreamingAssets/" + settings.targetPath;
-            codegenPath = settings.sourcePath + "/Runner/Constants.Generated.cs";
+            codegenPath = settings.codegenPath;
 
             if (!KataruWasModified(changedAssets, addedAssets, deletedAssets, movedAssets))
             {

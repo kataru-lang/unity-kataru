@@ -49,7 +49,7 @@ namespace Kataru
             targetPath = Application.streamingAssetsPath + "/" + settings.targetPath;
             bookmarkPath = Application.streamingAssetsPath + "/" + settings.bookmarkPath;
             savePath = Application.persistentDataPath + "/" + settings.savePath;
-            codegenPath = settings.sourcePath + "/Runner/Constants.Generated.cs";
+            codegenPath = settings.codegenPath;
 
             Debug.Log(
                     $@"Kataru.Init(StoryPath: '{targetPath}', 
