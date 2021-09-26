@@ -1,0 +1,13 @@
+---
+namespace: global
+characters:
+  Think:
+  Slime:
+  GlobalLight:
+
+---
+Start:
+  - Slime: Hey! Slime here.
+
+EndDialogue:
+  - return:

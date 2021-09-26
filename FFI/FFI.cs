@@ -249,5 +249,16 @@ namespace Kataru
             return attributes;
         }
         #endregion
+
+        #region Codegen
+        [DllImport("kataru_ffi")]
+        static extern FFIStr codegen_consts(byte[] path, UIntPtr length);
+        public static void CodegenConsts(string path)
+        {
+            var bytes = Encoding.UTF8.GetBytes(path);
+            codegen_consts(bytes, (UIntPtr)bytes.Length).ThrowIfError();
+        }
+
+        #endregion
     }
 }

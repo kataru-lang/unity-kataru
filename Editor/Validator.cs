@@ -6,9 +6,10 @@ namespace Kataru
 {
     public class Validator : AssetsModifiedProcessor
     {
-        static string storyPath;
-        static string bookmarkPath;
-        static string targetPath;
+        static string storyPath,
+            bookmarkPath,
+            targetPath,
+            codegenPath;
 
         /// <summary>
         /// The OnAssetsModified method is called whenever an Asset has been changed in the project.
@@ -23,6 +24,7 @@ namespace Kataru
             storyPath = "Assets/" + settings.storyPath;
             bookmarkPath = "Assets/StreamingAssets/" + settings.bookmarkPath;
             targetPath = "Assets/StreamingAssets/" + settings.targetPath;
+            codegenPath = settings.sourcePath + "/Runner/Constants.Generated.cs";
 
             if (!KataruWasModified(changedAssets, addedAssets, deletedAssets, movedAssets))
             {
@@ -30,7 +32,7 @@ namespace Kataru
             }
 
             // Run validation
-            Runner.Compile(storyPath, bookmarkPath, targetPath);
+            Runner.Compile(storyPath, bookmarkPath, targetPath, codegenPath);
         }
 
         /// <summary>

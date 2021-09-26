@@ -22,6 +22,7 @@ namespace Kataru
         [SerializeField] private static string targetPath;
         [SerializeField] private static string bookmarkPath;
         [SerializeField] private static string savePath;
+        [SerializeField] private static string codegenPath;
 
         // Events to listen to.
         public static event Action<LineTag> OnLine;
@@ -48,20 +49,22 @@ namespace Kataru
             targetPath = Application.streamingAssetsPath + "/" + settings.targetPath;
             bookmarkPath = Application.streamingAssetsPath + "/" + settings.bookmarkPath;
             savePath = Application.persistentDataPath + "/" + settings.savePath;
+            codegenPath = settings.sourcePath + "/Runner/Constants.Generated.cs";
 
             Debug.Log(
                     $@"Kataru.Init(StoryPath: '{targetPath}', 
                 BookmarkPath: '{bookmarkPath}', 
                 SavePath: '{savePath}')");
 
+#if UNITY_EDITOR
             if (!File.Exists(targetPath))
             {
                 Debug.LogWarning("Missing target. Retriggering compilation...");
-#if UNITY_EDITOR
                 storyPath = Application.dataPath + "/" + settings.storyPath;
-                Compile(storyPath, bookmarkPath, targetPath);
-#endif
+
+                Compile(storyPath, bookmarkPath, targetPath, codegenPath);
             }
+#endif
             // Only load the story on Init.
             FFI.LoadStory(targetPath);
         }
@@ -272,9 +275,20 @@ namespace Kataru
         }
 
 #if UNITY_EDITOR
-        public static void Compile(string storyPath, string bookmarkPath, string targetPath)
+        /// <summary>
+        /// Compiles the story at `storyPath` with bookmark at `bookmarkPath` to `targetPath`.
+        /// Generates a constants file and saves it to the Kataru source directory.
+        /// </summary>
+        /// <param name="storyPath"></param>
+        /// <param name="bookmarkPath"></param>
+        /// <param name="targetPath"></param>
+        /// <param name="codegenPath"></param>
+        public static void Compile(string storyPath, string bookmarkPath, string targetPath, string codegenPath)
         {
-            Debug.Log($@"Runner.Compile(storyPath: '{storyPath}' bookmarkPath: '{bookmarkPath}' targetPath: '{targetPath}')");
+            Debug.Log($@"Runner.Compile(storyPath: '{storyPath}'
+                bookmarkPath: '{bookmarkPath}'
+                targetPath: '{targetPath}'
+                codegenPath: '{codegenPath}')");
             try
             {
                 FFI.LoadStory(storyPath);
@@ -283,10 +297,20 @@ namespace Kataru
 
                 Debug.Log($"Story at '{storyPath}' validated. Saving compiled story to '{targetPath}'.");
                 FFI.SaveStory(targetPath);
+                FFI.CodegenConsts(codegenPath);
+
+                // Force unity to recompile using the newly generated source code.
+                UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
+
+                Debug.Log($"Constants file generated at {targetPath}");
+            }
+            catch (System.EntryPointNotFoundException e)
+            {
+                Debug.LogError($"Kataru error: could not find FFI command named '{e.Message}'");
             }
             catch (Exception e)
             {
-                Debug.LogError($"Kataru error: {e.Message}");
+                Debug.LogError($"Kataru error: {e.ToString()}");
             }
         }
 #endif
