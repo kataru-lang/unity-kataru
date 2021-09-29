@@ -1,9 +1,6 @@
 use std::{fs, os::raw::c_char};
 
-pub use crate::{
-    ffi::{FFIArray, FFIStr},
-    LINE, STORY,
-};
+pub use crate::{ffi::FFIStr, LINE, STORY};
 
 use kataru::*;
 

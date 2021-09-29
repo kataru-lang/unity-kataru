@@ -180,37 +180,19 @@ namespace Kataru
 
 
         [DllImport("kataru_ffi")]
-        static extern UIntPtr get_attributes();
-        static int GetAttributes() => (int)get_attributes();
-
-        [DllImport("kataru_ffi")]
-        static extern FFIStr get_attribute(UIntPtr i);
-        static string GetAttribute(int i) => get_attribute((UIntPtr)i).ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern FFIArray get_attribute_positions(UIntPtr i);
-        static int[] GetAttributePositions(int i) => get_attribute_positions((UIntPtr)i).ToArray();
+        static extern FFIStr get_attributes();
+        static AttributedSpan[] GetAttributes()
+        {
+            string json = get_attributes().ToString();
+            return JsonConvert.DeserializeObject<AttributedSpan[]>(json);
+        }
 
         public static Dialogue LoadDialogue() => new Dialogue()
         {
             name = GetSpeaker(),
             text = GetSpeech(),
-            attributes = LoadAttributes()
+            attributes = GetAttributes()
         };
-
-        public static IDictionary<string, Dialogue.Span[]> LoadAttributes()
-        {
-            var attributes = new Dictionary<string, Dialogue.Span[]>();
-            int numAttributes = GetAttributes();
-            for (int i = 0; i < numAttributes; ++i)
-            {
-                string attribute = GetAttribute(i);
-                int[] positions = GetAttributePositions(i);
-                Dialogue.Span[] spans = Dialogue.Span.FromArray(positions);
-                attributes[attribute] = spans;
-            }
-            return attributes;
-        }
         #endregion
 
         #region Codegen

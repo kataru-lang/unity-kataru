@@ -1,9 +1,7 @@
 mod ffi;
 
 mod dialogue;
-pub use dialogue::{
-    get_attribute, get_attribute_positions, get_attributes, get_speaker, get_speech,
-};
+pub use dialogue::{get_attributes, get_speaker, get_speech};
 
 mod bookmark;
 pub use bookmark::{

@@ -1,7 +1,4 @@
-pub use crate::{
-    ffi::{FFIArray, FFIStr},
-    LINE,
-};
+pub use crate::{ffi::FFIStr, LINE};
 use kataru::*;
 use serde_json;
 
@@ -27,7 +24,7 @@ pub extern "C" fn get_params() -> FFIStr {
             }
             FFIStr::from(&PARAMS_JSON)
         } else {
-            FFIStr::from("")
+            FFIStr::from("{\"error\": \"Called get_params on a non-command line.\"}")
         }
     }
 }
