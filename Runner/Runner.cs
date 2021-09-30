@@ -33,7 +33,7 @@ namespace Kataru
         public static DelegateMap CommandDelegates = new DelegateMap();
         public static DelegateMap CharacterDelegates = new DelegateMap();
 
-        private static LineTag Tag = LineTag.End;
+        public static LineTag Tag = LineTag.End;
         public static bool isRunning = false;
         private static bool isWaiting = false;
 
@@ -137,9 +137,10 @@ namespace Kataru
 
         /// <summary>
         /// Goto a passage and run until choices are required.
+        /// Returns true if choices encountered; returns false if choices are not.
         /// </summary>
         /// <param name="passage"></param>
-        public static void RunPassageUntilChoice(string passage)
+        public static bool RunPassageUntilChoice(string passage)
         {
             RunPassage(passage);
 
@@ -149,6 +150,8 @@ namespace Kataru
             }
 
             Exit();
+
+            return Tag == LineTag.Choices;
         }
 
         /// <summary>
@@ -251,7 +254,7 @@ namespace Kataru
         public static IEnumerator DelayedNext(float seconds, string input = "")
         {
             isWaiting = true;
-            yield return new WaitForSeconds(seconds);
+            yield return new WaitForSecondsRealtime(seconds);
 
             isWaiting = false;
             Next(input);
