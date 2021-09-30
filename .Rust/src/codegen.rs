@@ -46,6 +46,9 @@ fn get_vars_defs<S: AsRef<str>>(names: &[S]) -> (Vec<String>, Vec<String>) {
     let mut vardefs = Vec::with_capacity(names.len());
 
     for name in names {
+        if name.as_ref().is_empty() {
+            continue;
+        }
         let varname = get_varname(name.as_ref());
         vardefs.push(format!("{} = \"{}\"", varname, name.as_ref()));
         varnames.push(varname);

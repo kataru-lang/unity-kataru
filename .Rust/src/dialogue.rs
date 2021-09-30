@@ -34,14 +34,6 @@ pub extern "C" fn get_attributes() -> FFIStr {
                 Ok(json) => json,
                 Err(err) => format!("{{\"error\": \"{}\"}}", err),
             };
-            // if dialogue.attributes.is_empty() {
-            //     "{\"start\": 0, \"end\": 0}".to_string()
-            // } else {
-            //     match serde_json::to_string(&dialogue.attributes) {
-            //         Ok(json) => json,
-            //         Err(err) => format!("{{\"error\": \"{}\"}}", err),
-            //     }
-            // };
             FFIStr::from(&ATTRIBUTES_JSON)
         } else {
             FFIStr::from("{\"error\": \"Called get_params on a non-dialogue line.\"}")
