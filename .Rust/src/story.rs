@@ -1,7 +1,4 @@
-pub use crate::{
-    ffi::{FFIArray, FFIStr},
-    BOOKMARK,
-};
+pub use crate::{ffi::FFIStr, BOOKMARK};
 use kataru::*;
 use std::os::raw::c_char;
 

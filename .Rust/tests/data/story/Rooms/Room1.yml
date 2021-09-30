@@ -1,0 +1,14 @@
+---
+namespace: Room1
+
+characters:
+  RedSlime:
+  Party:
+  PartyLight:
+
+---
+RedSlimeTrigger:
+  - RedSlime: Test
+
+RedSlimeTalk:
+  - RedSlime: Test

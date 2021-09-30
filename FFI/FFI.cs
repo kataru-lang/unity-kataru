@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Kataru
 {
@@ -148,57 +149,19 @@ namespace Kataru
         }
         #endregion
 
+        [DllImport("kataru_ffi")]
+        static extern FFIStr get_params();
+        static Dictionary<string, object> GetParams()
+        {
+            string json = get_params().ToString();
+            Debug.Log($"Got json: {json}");
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        }
+
         #region Commands
         [DllImport("kataru_ffi")]
         static extern FFIStr get_command();
-        static string GetCommand() => get_command().ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern int get_params();
-        static int GetParams() => (int)get_params();
-
-        [DllImport("kataru_ffi")]
-        static extern FFIStr get_param(UIntPtr i);
-        static string GetParam(int i) => get_param((UIntPtr)i).ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern ParamType get_param_type(UIntPtr i);
-        [DllImport("kataru_ffi")]
-        static extern bool get_param_bool(UIntPtr i);
-        [DllImport("kataru_ffi")]
-        static extern FFIStr get_param_string(UIntPtr i);
-        [DllImport("kataru_ffi")]
-        static extern double get_param_number(UIntPtr i);
-        static object GetParamValue(int i)
-        {
-            UIntPtr u = (UIntPtr)i;
-            ParamType paramType = get_param_type(u);
-            switch (paramType)
-            {
-                case ParamType.Bool:
-                    return get_param_bool(u);
-
-                case ParamType.Number:
-                    return get_param_number(u);
-
-                case ParamType.String:
-                    return get_param_string(u).ToString();
-
-                default:
-                    return null;
-            }
-        }
-
-        public static Command LoadCommand()
-        {
-            var parameters = new Dictionary<string, object>();
-            int numParameters = GetParams();
-            for (int i = 0; i < numParameters; ++i)
-            {
-                parameters[GetParam(i)] = GetParamValue(i);
-            }
-            return new Command() { name = GetCommand(), parameters = parameters };
-        }
+        public static Command GetCommand() => new Command() { name = get_command().ToString(), parameters = GetParams() };
 
         public static InputCommand LoadInputCommand()
         {
@@ -217,37 +180,30 @@ namespace Kataru
 
 
         [DllImport("kataru_ffi")]
-        static extern UIntPtr get_attributes();
-        static int GetAttributes() => (int)get_attributes();
-
-        [DllImport("kataru_ffi")]
-        static extern FFIStr get_attribute(UIntPtr i);
-        static string GetAttribute(int i) => get_attribute((UIntPtr)i).ToString();
-
-        [DllImport("kataru_ffi")]
-        static extern FFIArray get_attribute_positions(UIntPtr i);
-        static int[] GetAttributePositions(int i) => get_attribute_positions((UIntPtr)i).ToArray();
+        static extern FFIStr get_attributes();
+        static AttributedSpan[] GetAttributes()
+        {
+            string json = get_attributes().ToString();
+            return JsonConvert.DeserializeObject<AttributedSpan[]>(json);
+        }
 
         public static Dialogue LoadDialogue() => new Dialogue()
         {
             name = GetSpeaker(),
             text = GetSpeech(),
-            attributes = LoadAttributes()
+            attributes = GetAttributes()
         };
+        #endregion
 
-        public static IDictionary<string, Dialogue.Span[]> LoadAttributes()
+        #region Codegen
+        [DllImport("kataru_ffi")]
+        static extern FFIStr codegen_consts(byte[] path, UIntPtr length);
+        public static void CodegenConsts(string path)
         {
-            var attributes = new Dictionary<string, Dialogue.Span[]>();
-            int numAttributes = GetAttributes();
-            for (int i = 0; i < numAttributes; ++i)
-            {
-                string attribute = GetAttribute(i);
-                int[] positions = GetAttributePositions(i);
-                Dialogue.Span[] spans = Dialogue.Span.FromArray(positions);
-                attributes[attribute] = spans;
-            }
-            return attributes;
+            var bytes = Encoding.UTF8.GetBytes(path);
+            codegen_consts(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
+
         #endregion
     }
 }

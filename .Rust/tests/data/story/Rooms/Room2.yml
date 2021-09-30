@@ -1,0 +1,27 @@
+---
+namespace: Room2
+characters:
+  BlueSlime:
+  GreenSlime:
+
+---
+BlueSlimeTalk:
+  - BlueSlime: Test
+
+ThanksGoop:
+  - Slime: Uh, yeah, I can try.
+
+GiveGoop:
+  - Slime: Here.
+
+NoGiveGoop:
+  - GreenSlime: No give goop
+
+AngryGreen:
+  - GreenSlime: <size=200%><b>BLUE!!!!
+
+GreenObserve:
+  - Slime: Eheh.. Hi..
+
+Poster:
+  - Think: A poster of myself.

@@ -1,4 +1,4 @@
-pub use crate::ffi::{FFIArray, FFIStr};
+pub use crate::ffi::FFIStr;
 use crate::STORY;
 use kataru::*;
 use std::os::raw::c_char;

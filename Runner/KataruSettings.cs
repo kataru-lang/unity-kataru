@@ -10,21 +10,35 @@ namespace Kataru
     // Create a new type of Settings Asset.
     public class KataruSettings : ScriptableObject
     {
-        const string SettingsDirectory = "Assets/Kataru";
-        const string SettingsFile = "Kataru Settings";
+        // Constants
+        public const string SettingsDirectory = "Assets/Kataru",
+            SettingsFile = "Kataru Settings";
+
+        // Tooltips
+        public const string codegenPathTooltip = "The path where Kataru generated C# code should be saved, relative to project root. Standard installations use Assets/Scripts/Kataru/Constants.Generated.cs.",
+            storyPathTooltip = "The path to the story folder containing Kataru YAML files (.yml), relative to Application.dataPath(Assets / when in editor). Should be in an Editor directory to avoid inclusion in build.",
+            bookmarkPathTooltip = "The path to the default bookmark file (.yml or .bin), relative to Application.dataPath(Assets / when in editor).",
+            targetPathTooltip = "Path to output compiled Kataru script (.bin), relative to Application.dataPath (Assets/ when in editor).",
+            savePathTooltip = "Path to store the player's save data, relative to Application.persistentDataPath.";
 
         [SerializeField]
+        [Tooltip(codegenPathTooltip)]
+        public string codegenPath;
+
+        [SerializeField]
+        [Tooltip(storyPathTooltip)]
         public string storyPath;
 
         [SerializeField]
-        [Tooltip("File path of bookmark relative to StreamingAssets folder")]
+        [Tooltip(bookmarkPathTooltip)]
         public string bookmarkPath;
 
         [SerializeField]
-        [Tooltip("File name of compiled Kataru relative to StreamingAssets folder")]
+        [Tooltip(targetPathTooltip)]
         public string targetPath;
 
         [SerializeField]
+        [Tooltip(savePathTooltip)]
         public string savePath;
 
         private static KataruSettings instance = null;
@@ -53,43 +67,28 @@ namespace Kataru
                 settings.bookmarkPath = "Kataru/Bookmark.yml";
                 settings.targetPath = "Kataru/story.bin";
                 settings.savePath = "Kataru/bookmark.bin";
+                settings.codegenPath = "Assets/Scripts/Kataru/Constants.Generated.cs";
                 AssetDatabase.CreateAsset(settings, SettingsDirectory + "/Resources/" + SettingsFile);
                 AssetDatabase.SaveAssets();
             }
 #endif
             return settings;
         }
-
-        // private void OnEnable()
-        // {
-        //     if (instance == null) instance = Load();
-        //     Refresh(this);
-        // }
-
-        // // Force refresh the contents of the instance 
-        // void Refresh(KataruSettings instance)
-        // {
-        //     var settings = Get();
-        //     settings.storyPath = instance.storyPath;
-        //     settings.bookmarkPath = instance.bookmarkPath;
-        //     settings.targetPath = instance.targetPath;
-        //     settings.savePath = instance.savePath;
-        // }
     }
 
 #if UNITY_EDITOR
     // Create KataruSettingsProvider by deriving from SettingsProvider:
     public class KataruSettingsProvider : SettingsProvider
     {
-        // private KataruSettings settings;
         private SerializedObject serializedSettings;
 
         class Styles
         {
-            public static GUIContent storyPath = new GUIContent("Story Path");
-            public static GUIContent bookmarkPath = new GUIContent("Bookmark Path");
-            public static GUIContent targetPath = new GUIContent("Target Path");
-            public static GUIContent savePath = new GUIContent("Save Path");
+            public static GUIContent codegenPath = new GUIContent("Kataru Source Path"),
+                storyPath = new GUIContent("Story Path"),
+                bookmarkPath = new GUIContent("Bookmark Path"),
+                targetPath = new GUIContent("Target Path"),
+                savePath = new GUIContent("Save Path");
         }
 
 #if UNITY_EDITOR
@@ -98,7 +97,6 @@ namespace Kataru
 #endif
         public override void OnActivate(string searchContext, VisualElement rootElement)
         {
-            Debug.LogWarning("OnActivate");
             // This function is called when the user clicks on the MyCustom element in the Settings window.
             serializedSettings = new SerializedObject(KataruSettings.Get(createIfMissing: true));
         }
@@ -106,24 +104,24 @@ namespace Kataru
         public override void OnGUI(string searchContext)
         {
             // Use IMGUI to display UI:
+            EditorGUILayout.PropertyField(serializedSettings.FindProperty("codegenPath"), Styles.codegenPath);
+            EditorGUILayout.HelpBox(KataruSettings.codegenPathTooltip, MessageType.None);
+            EditorGUILayout.Space();
+
             EditorGUILayout.PropertyField(serializedSettings.FindProperty("storyPath"), Styles.storyPath);
-            EditorGUILayout.HelpBox(
-                "The path to the story folder containing Kataru YAML files (.yml). " +
-                "Should be in an Editor directory to avoid inclusion in build.",
-                MessageType.None);
+            EditorGUILayout.HelpBox(KataruSettings.storyPathTooltip, MessageType.None);
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(serializedSettings.FindProperty("bookmarkPath"), Styles.bookmarkPath);
-            EditorGUILayout.HelpBox("The path to the default bookmark file (.yml or .bin).",
-                MessageType.None);
+            EditorGUILayout.HelpBox(KataruSettings.bookmarkPathTooltip, MessageType.None);
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(serializedSettings.FindProperty("targetPath"), Styles.targetPath);
-            EditorGUILayout.HelpBox("Path to output compiled Kataru script (.bin).", MessageType.None);
+            EditorGUILayout.HelpBox(KataruSettings.targetPathTooltip, MessageType.None);
             EditorGUILayout.Space();
 
             EditorGUILayout.PropertyField(serializedSettings.FindProperty("savePath"), Styles.savePath);
-            EditorGUILayout.HelpBox("Path relative to Application.persistentDataPath to store the player's save data.", MessageType.None);
+            EditorGUILayout.HelpBox(KataruSettings.savePathTooltip, MessageType.None);
             EditorGUILayout.Space();
 
             if (EditorGUI.EndChangeCheck())
@@ -136,7 +134,6 @@ namespace Kataru
         [SettingsProvider]
         public static SettingsProvider CreateKataruSettingsProvider()
         {
-            Debug.LogWarning("CreateKataruSettingsProvider");
             KataruSettings.Load();
             var provider = new KataruSettingsProvider("Project/Kataru Settings", SettingsScope.Project);
 

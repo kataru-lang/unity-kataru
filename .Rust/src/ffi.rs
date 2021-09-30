@@ -38,19 +38,3 @@ impl FFIStr {
         }
     }
 }
-
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct FFIArray {
-    uintptr: *const i32,
-    length: usize,
-}
-
-impl FFIArray {
-    pub fn from(vector: &[i32]) -> Self {
-        Self {
-            uintptr: vector.as_ptr(),
-            length: vector.len(),
-        }
-    }
-}

@@ -1,7 +1,4 @@
-pub use crate::{
-    ffi::{FFIArray, FFIStr},
-    LINE,
-};
+pub use crate::{ffi::FFIStr, LINE};
 use kataru::*;
 
 static mut CHOICES: Vec<FFIStr> = Vec::new();
