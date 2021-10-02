@@ -61,14 +61,14 @@ fn get_vars_defs<S: AsRef<str>>(names: &[S]) -> (Vec<String>, Vec<String>) {
 /// Make public for test access.
 pub fn build_codegen_consts(story: &Story) -> Result<String> {
     // Collect all entities that need constants.
-    let mut namespaces = Vec::<&str>::with_capacity(story.len());
-    let mut passages = Vec::<String>::with_capacity(story.len());
-    let mut characters = Vec::<String>::with_capacity(story.len());
+    let mut namespaces = Vec::<&str>::with_capacity(story.sections.len());
+    let mut passages = Vec::<String>::with_capacity(story.sections.len());
+    let mut characters = Vec::<String>::with_capacity(story.sections.len());
 
     // Keep track of namespace boundaries for passages and characters.
     // The last passage index used for this namespace`passage_bounds[namespace_enum]`.
 
-    for (namespace, section) in story {
+    for (namespace, section) in &story.sections {
         // For global namespace, don't add global to the sorted list.
         // And don't prepend the namespace.
         if namespace == kataru::GLOBAL {
