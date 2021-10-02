@@ -151,7 +151,7 @@ checksum = "b71991ff56294aa922b450139ee08b3bfc70982c6b2c7562771375cf73542dd4"
 [[package]]
 name = "kataru"
 version = "0.1.0"
-source = "git+https://github.com/Katsutoshii/kataru.git?branch=main#49ee151a01987808b333402c30d3f7b6b9d3391c"
+source = "git+https://github.com/Katsutoshii/kataru.git?branch=main#40b8cb9a0699b1bbca2f6116e33227def117d91a"
 dependencies = [
  "bincode",
  "colored",
