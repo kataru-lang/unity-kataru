@@ -4,6 +4,8 @@ pub use crate::{ffi::FFIStr, LINE, STORY};
 
 use kataru::*;
 
+static mut CODEGEN_WAS_UPDATED: bool = false;
+
 /// Generate the constants C# file.
 /// Assumes story is already loaded.
 #[no_mangle]
@@ -18,17 +20,32 @@ fn try_codegen_consts(path: &str) -> Result<()> {
         match &STORY {
             Some(story) => {
                 let source = build_codegen_consts(story)?;
+                match fs::read_to_string(path) {
+                    Ok(old_source) => {
+                        if source == old_source {
+                            CODEGEN_WAS_UPDATED = false;
+                            return Ok(());
+                        }
+                    }
+                    Err(_) => (),
+                };
                 if let Err(err) = fs::write(path, &source) {
                     return Err(error!(
                         "Error writing generated file to '{}': {}",
                         path, err
                     ));
                 }
+                CODEGEN_WAS_UPDATED = true;
                 Ok(())
             }
             None => Err(error!("Story was none.")),
         }
     }
+}
+
+#[no_mangle]
+pub extern "C" fn codegen_was_updated() -> bool {
+    unsafe { CODEGEN_WAS_UPDATED }
 }
 
 /// Convert a kataru identifier to a C# varname.
@@ -61,14 +78,14 @@ fn get_vars_defs<S: AsRef<str>>(names: &[S]) -> (Vec<String>, Vec<String>) {
 /// Make public for test access.
 pub fn build_codegen_consts(story: &Story) -> Result<String> {
     // Collect all entities that need constants.
-    let mut namespaces = Vec::<&str>::with_capacity(story.len());
-    let mut passages = Vec::<String>::with_capacity(story.len());
-    let mut characters = Vec::<String>::with_capacity(story.len());
+    let mut namespaces = Vec::<&str>::with_capacity(story.sections.len());
+    let mut passages = Vec::<String>::with_capacity(story.sections.len());
+    let mut characters = Vec::<String>::with_capacity(story.sections.len());
 
     // Keep track of namespace boundaries for passages and characters.
     // The last passage index used for this namespace`passage_bounds[namespace_enum]`.
 
-    for (namespace, section) in story {
+    for (namespace, section) in &story.sections {
         // For global namespace, don't add global to the sorted list.
         // And don't prepend the namespace.
         if namespace == kataru::GLOBAL {

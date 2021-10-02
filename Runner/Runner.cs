@@ -303,9 +303,10 @@ namespace Kataru
                 FFI.CodegenConsts(codegenPath);
 
                 // Force unity to recompile using the newly generated source code.
-                UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
-
-                Debug.Log($"Constants file generated at {targetPath}");
+                if (FFI.CodegenWasUpdated()) {
+                    Debug.Log($"Constants file generated at {targetPath}");
+                    UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
+                }
             }
             catch (System.EntryPointNotFoundException e)
             {
