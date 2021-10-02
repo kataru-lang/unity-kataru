@@ -4,6 +4,8 @@ pub use crate::{ffi::FFIStr, LINE, STORY};
 
 use kataru::*;
 
+static mut CODEGEN_WAS_UPDATED: bool = false;
+
 /// Generate the constants C# file.
 /// Assumes story is already loaded.
 #[no_mangle]
@@ -18,17 +20,32 @@ fn try_codegen_consts(path: &str) -> Result<()> {
         match &STORY {
             Some(story) => {
                 let source = build_codegen_consts(story)?;
+                match fs::read_to_string(path) {
+                    Ok(old_source) => {
+                        if source == old_source {
+                            CODEGEN_WAS_UPDATED = false;
+                            return Ok(());
+                        }
+                    }
+                    Err(_) => (),
+                };
                 if let Err(err) = fs::write(path, &source) {
                     return Err(error!(
                         "Error writing generated file to '{}': {}",
                         path, err
                     ));
                 }
+                CODEGEN_WAS_UPDATED = true;
                 Ok(())
             }
             None => Err(error!("Story was none.")),
         }
     }
+}
+
+#[no_mangle]
+pub extern "C" fn codegen_was_updated() -> bool {
+    unsafe { CODEGEN_WAS_UPDATED }
 }
 
 /// Convert a kataru identifier to a C# varname.

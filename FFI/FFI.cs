@@ -204,6 +204,9 @@ namespace Kataru
             codegen_consts(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        [DllImport("kataru_ffi")]
+        static extern bool codegen_was_updated();
+        public static bool CodegenWasUpdated() => codegen_was_updated();
         #endregion
     }
 }
