@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -65,6 +65,9 @@ namespace Kataru
                 Compile(storyPath, bookmarkPath, targetPath, codegenPath);
             }
 #endif
+
+            isRunning = false;
+            isWaiting = false;
             // Only load the story on Init.
             FFI.LoadStory(targetPath);
         }
