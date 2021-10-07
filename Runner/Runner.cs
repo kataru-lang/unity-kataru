@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -68,6 +68,7 @@ namespace Kataru
 
             isRunning = false;
             isWaiting = false;
+
             // Only load the story on Init.
             FFI.LoadStory(targetPath);
         }
@@ -259,8 +260,13 @@ namespace Kataru
         /// <returns></returns>
         public static IEnumerator DelayedNext(float seconds, string input = "")
         {
+            // Debug.Log("Calling Runner.DelayedNext");
             isWaiting = true;
             yield return new WaitForSecondsRealtime(seconds);
+            while (Time.timeScale != 1f)
+            {
+                yield return null;
+            }
 
             isWaiting = false;
             Next(input);
@@ -306,7 +312,8 @@ namespace Kataru
                 FFI.CodegenConsts(codegenPath);
 
                 // Force unity to recompile using the newly generated source code.
-                if (FFI.CodegenWasUpdated()) {
+                if (FFI.CodegenWasUpdated())
+                {
                     Debug.Log($"Constants file generated at {targetPath}");
                     UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
                 }
