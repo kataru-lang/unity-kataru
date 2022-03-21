@@ -76,7 +76,18 @@ Once downloaded, check out the examples in [TODO! No examples yet]().
 
 ## Getting Help
 
-For Unity-Kataru bugs or feature requests, file an issue. Kataru bugs should get filed in the [kataru](https://github.com/kataru-lang/kataru) repo. For other concerns, contact kataru-dev@gmail.com. 
+For Unity-Kataru bugs or feature requests, file an issue. Kataru bugs should get filed in the [kataru](https://github.com/kataru-lang/kataru) repo. For other concerns, contact kataru-dev@gmail.com.
+
+# Notes on WebGL
+
+To produce a valid LLVM bytecode file for Unity to consume, we use `build-std` to compile the standard library into the produced bytecode.
+This is done via:
+
+```
+rustup component add rust-src --toolchain nightly
+cargo +nightly rustc --target x86_64-pc-windows-msvc --all-features -Z build-std -Z unstable-options --crate-type=staticlib --release -- --emit=llvm-bc
+emar r .Rust/target/release/deps/kataru_ffi.a .Rust\target\x86_64-pc-windows-msvc\release\deps\kataru_ffi-*.bc
+```
 
 ## License
 
