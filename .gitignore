@@ -59,5 +59,3 @@ sysinfo.txt
 crashlytics-build.properties
 
 Rust/**/*.meta
-build.sh.meta
-build.ps1.meta
