@@ -72,7 +72,7 @@ As well as conditionals, variables, and everything else you expect in a dialogue
 
 Read [kataru-lang.github.io/#/installation](https://kataru-lang.github.io/#/installation).
 
-Once downloaded, check out the examples in [TODO! No examples yet]().
+Once downloaded, check out the [examples](https://kataru-lang.github.io/#/examples).
 
 ## Getting Help
 
