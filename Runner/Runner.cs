@@ -37,6 +37,7 @@ namespace Kataru
         public static LineTag Tag = LineTag.End;
         public static bool isRunning = false;
         private static bool isWaiting = false;
+        public static bool isInitialized = false;
 
 
         /// <summary>
@@ -45,6 +46,7 @@ namespace Kataru
         /// </summary>
         public static void Init()
         {
+            isInitialized = false;
             var settings = KataruSettings.Get(createIfMissing: true);
             targetPath = Application.streamingAssetsPath + "/" + settings.targetPath;
             bookmarkPath = Application.streamingAssetsPath + "/" + settings.bookmarkPath;
@@ -71,6 +73,8 @@ namespace Kataru
 
             // Only load the story on Init.
             FFI.LoadStory(targetPath);
+
+            isInitialized = true;
         }
 
         /// <summary>
@@ -78,6 +82,12 @@ namespace Kataru
         /// </summary>
         public static void Save()
         {
+            if (!isInitialized)
+            {
+                Debug.LogError($"Have not initialized. Call Runner.Init() before calling this.");
+                return;
+            }
+
             var parent = Directory.GetParent(savePath);
             if (!parent.Exists)
             {
@@ -99,6 +109,12 @@ namespace Kataru
         /// </summary>
         public static void DeleteSave()
         {
+            if (!isInitialized)
+            {
+                Debug.LogError($"Have not initialized. Call Runner.Init() before calling this.");
+                return;
+            }
+
             if (SaveExists())
                 File.Delete(savePath);
         }
@@ -109,12 +125,19 @@ namespace Kataru
         /// </summary>
         public static void Load()
         {
+            if (!isInitialized)
+            {
+                Debug.LogError($"Have not initialized. Call Runner.Init() before calling this.");
+                return;
+            }
+
             if (SaveExists())
             {
                 FFI.LoadBookmark(savePath);
             }
             else
             {
+                Debug.Log($"Loading bookmark {bookmarkPath}");
                 FFI.LoadBookmark(bookmarkPath);
             }
 

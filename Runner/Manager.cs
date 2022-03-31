@@ -10,16 +10,14 @@ namespace Kataru
     /// </summary>
     public class Manager : Handler
     {
-        static bool initialized = false;
 
         protected virtual void Awake()
         {
 #if UNITY_EDITOR
-            if (initialized) Debug.LogError(@"A Kataru Manager was already initialized.
+            if (Runner.isInitialized) Debug.LogError(@"A Kataru Manager was already initialized.
                 You should only have one Kataru Manager in your scene.");
 #endif
             Runner.Init();
-            initialized = true;
         }
     }
 }
