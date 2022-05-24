@@ -1,6 +1,7 @@
 # Build rust library
 pushd .Rust
-cargo update
+# Don't update for now, since this causes build errors.
+# cargo update
 cargo build --target x86_64-apple-darwin --all-features --release
 popd
 
