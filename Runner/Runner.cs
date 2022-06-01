@@ -116,7 +116,12 @@ namespace Kataru
             }
 
             if (SaveExists())
+            {
+#if UNITY_EDITOR
+                Debug.Log($"Kataru.DeleteSave() at '{savePath}'");
+#endif
                 File.Delete(savePath);
+            }
         }
 
         /// <summary>
