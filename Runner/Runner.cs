@@ -109,12 +109,6 @@ namespace Kataru
         /// </summary>
         public static void DeleteSave()
         {
-            if (!isInitialized)
-            {
-                Debug.LogError($"Have not initialized. Call Runner.Init() before calling this.");
-                return;
-            }
-
             if (SaveExists())
             {
 #if UNITY_EDITOR
