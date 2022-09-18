@@ -5,6 +5,9 @@ characters:
   Slime:
   GlobalLight:
 
+state:
+  var: false
+
 ---
 Start:
   - Slime: Hey! Slime here.
