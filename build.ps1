@@ -1,7 +1,8 @@
 Push-Location .Rust
 cargo update
 cargo build --target x86_64-pc-windows-msvc --all-features --release
-cargo +nightly rustc --target x86_64-pc-windows-msvc --all-features -Z build-std -Z unstable-options --crate-type=staticlib --release -- --emit=llvm-bc
+# cargo +nightly rustc --target x86_64-pc-windows-msvc --all-features -Z build-std -Z unstable-options --crate-type=dylib --release -- --emit=llvm-bc
+cargo +nightly rustc --target x86_64-pc-windows-msvc --all-features -Z build-std --release -- --emit=llvm-bc
 Pop-Location
 
 Copy-Item .Rust/target/x86_64-pc-windows-msvc/release/kataru_ffi.dll "Plugins/Windows/kataru_ffi.dll"

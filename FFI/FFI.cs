@@ -13,7 +13,11 @@ namespace Kataru
     internal class FFI
     {
         #region Bookmark
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr load_bookmark(byte[] path, UIntPtr length);
         public static void LoadBookmark(string path)
         {
@@ -21,7 +25,11 @@ namespace Kataru
             load_bookmark(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr save_bookmark(byte[] path, UIntPtr length);
         public static void SaveBookmark(string path)
         {
@@ -29,7 +37,11 @@ namespace Kataru
             save_bookmark(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr load_snapshot(byte[] name, UIntPtr length);
         public static void LoadSnapshot(string name)
         {
@@ -37,7 +49,11 @@ namespace Kataru
             load_snapshot(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr save_snapshot(byte[] name, UIntPtr length);
         public static void SaveSnapshot(string name)
         {
@@ -45,7 +61,11 @@ namespace Kataru
             save_snapshot(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr set_state_string(byte[] key, UIntPtr length, byte[] value, UIntPtr value_length);
         public static void SetState(string key, string value)
         {
@@ -54,7 +74,11 @@ namespace Kataru
             set_state_string(bytes, (UIntPtr)bytes.Length, value_bytes, (UIntPtr)value_bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr set_state_number(byte[] key, UIntPtr length, double value);
         public static void SetState(string key, double value)
         {
@@ -62,7 +86,11 @@ namespace Kataru
             set_state_number(bytes, (UIntPtr)bytes.Length, value).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr set_state_bool(byte[] key, UIntPtr length, bool value);
         public static void SetState(string key, bool value)
         {
@@ -70,17 +98,29 @@ namespace Kataru
             set_state_bool(bytes, (UIntPtr)bytes.Length, value).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr set_line(UIntPtr value);
         public static void SetLine(int line) => set_line((UIntPtr)line).ThrowIfError();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_passage();
         public static string GetPassage() => get_passage().ToString();
         #endregion
 
         #region Story
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr load_story(byte[] path, UIntPtr length);
         public static void LoadStory(string path)
         {
@@ -88,7 +128,11 @@ namespace Kataru
             load_story(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr save_story(byte[] path, UIntPtr length);
         public static void SaveStory(string path)
         {
@@ -96,17 +140,29 @@ namespace Kataru
             save_story(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr init_runner();
         public static void InitRunner() =>
             init_runner().ThrowIfError();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr validate();
         public static void Validate() =>
             validate().ThrowIfError();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr next(byte[] input, UIntPtr length);
         public static void Next(string input)
         {
@@ -114,11 +170,19 @@ namespace Kataru
             next(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern LineTag tag();
         public static LineTag Tag() => tag();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr goto_passage(byte[] passage, UIntPtr length);
         public static void GotoPassage(string passage)
         {
@@ -128,15 +192,27 @@ namespace Kataru
         #endregion
 
         #region Choices
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern UIntPtr get_choices();
         static int GetChoices() => (int)get_choices();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_choice(UIntPtr i);
         static string GetChoice(int i) => get_choice((UIntPtr)i).ToString();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern double get_timeout();
         static double GetTimeout() => get_timeout();
 
@@ -149,7 +225,11 @@ namespace Kataru
         }
         #endregion
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_params();
         static Dictionary<string, object> GetParams()
         {
@@ -159,7 +239,11 @@ namespace Kataru
         }
 
         #region Commands
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_command();
         public static Command GetCommand() => new Command() { name = get_command().ToString(), parameters = GetParams() };
 
@@ -170,16 +254,28 @@ namespace Kataru
         #endregion
 
         #region Dialogue
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_speaker();
         static string GetSpeaker() => get_speaker().ToString();
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_speech();
         static string GetSpeech() => get_speech().ToString();
 
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr get_attributes();
         static AttributedSpan[] GetAttributes()
         {
@@ -196,7 +292,11 @@ namespace Kataru
         #endregion
 
         #region Codegen
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern FFIStr codegen_consts(byte[] path, UIntPtr length);
         public static void CodegenConsts(string path)
         {
@@ -204,7 +304,11 @@ namespace Kataru
             codegen_consts(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
 
+        #if UNITY_WEBGL
+        [DllImport("__Internal")]
+        #else
         [DllImport("kataru_ffi")]
+        #endif
         static extern bool codegen_was_updated();
         public static bool CodegenWasUpdated() => codegen_was_updated();
         #endregion
