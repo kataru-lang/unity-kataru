@@ -49,9 +49,10 @@ fn try_set_state(key: &str, value: Value) -> Result<()> {
                     op: AssignOperator::None,
                 },
                 value,
-            )?;
+            )
+        } else {
+            Err(error!("Bookmark was None."))
         }
-        Err(error!("Bookmark was None."))
     }
 }
 #[no_mangle]
