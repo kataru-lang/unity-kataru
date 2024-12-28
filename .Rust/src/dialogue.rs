@@ -1,6 +1,5 @@
 pub use crate::{ffi::FFIStr, LINE};
 use kataru::*;
-use serde_json;
 
 static mut ATTRIBUTES_JSON: String = String::new();
 

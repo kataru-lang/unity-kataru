@@ -1,28 +1,14 @@
-pub use crate::{ffi::FFIStr, BOOKMARK};
+pub use crate::ffi::FFIStr;
+use crate::{LINE, RUNNER};
 use kataru::*;
 use std::os::raw::c_char;
 
-pub static mut STORY: Option<Story> = None;
-pub static mut RUNNER: Option<Runner> = None;
-pub static mut LINE: Line = Line::End;
-
-// For stories.
-fn try_load_story(path: &str) -> Result<()> {
-    unsafe {
-        STORY = Some(Story::load(path)?);
-        Ok(())
-    }
-}
-#[no_mangle]
-pub extern "C" fn load_story(path: *const c_char, length: usize) -> FFIStr {
-    let path = FFIStr::to_str(path, length);
-    FFIStr::result(try_load_story(path))
-}
 fn try_save_story(path: &str) -> Result<()> {
     unsafe {
-        match &STORY {
-            Some(story) => story.save(path),
-            None => Err(error!("Story was None.")),
+        if let Some(runner) = RUNNER.as_mut() {
+            runner.save_story(path)
+        } else {
+            Err(error!("Runner was not initialized."))
         }
     }
 }
@@ -32,36 +18,37 @@ pub extern "C" fn save_story(path: *const c_char, length: usize) -> FFIStr {
     FFIStr::result(try_save_story(path))
 }
 
-fn try_init_runner() -> Result<()> {
+fn try_init_runner(story_path: &str, bookmark_path: &str, validate: bool) -> Result<()> {
     unsafe {
-        if let Some(bookmark) = BOOKMARK.as_mut() {
-            if let Some(story) = STORY.as_ref() {
-                RUNNER = Some(Runner::new(bookmark, story)?);
-                Ok(())
-            } else {
-                Err(error!("Story was None."))
-            }
-        } else {
-            Err(error!("Bookmark was None."))
-        }
+        RUNNER = Some(Runner::init(
+            Bookmark::load(bookmark_path)?,
+            Story::load(story_path)?,
+            validate,
+        )?);
+        Ok(())
     }
 }
 #[no_mangle]
-pub extern "C" fn init_runner() -> FFIStr {
-    FFIStr::result(try_init_runner())
+pub extern "C" fn init_runner(
+    story_path: *const c_char,
+    story_length: usize,
+    bookmark_path: *const c_char,
+    bookmark_length: usize,
+    validate: bool,
+) -> FFIStr {
+    FFIStr::result(try_init_runner(
+        FFIStr::to_str(story_path, story_length),
+        FFIStr::to_str(bookmark_path, bookmark_length),
+        validate,
+    ))
 }
 
 fn try_validate() -> Result<()> {
     unsafe {
-        if let Some(story) = STORY.as_ref() {
-            if let Some(bookmark) = BOOKMARK.as_mut() {
-                Validator::new(story, bookmark).validate()?;
-                Ok(())
-            } else {
-                Err(error!("Bookmark was None."))
-            }
+        if let Some(runner) = RUNNER.as_mut() {
+            runner.validate()
         } else {
-            Err(error!("Story was None."))
+            Err(error!("Runner was not initialized."))
         }
     }
 }
@@ -83,7 +70,7 @@ fn try_next(input: &str) -> Result<()> {
 #[no_mangle]
 pub extern "C" fn next(input: *const c_char, length: usize) -> FFIStr {
     let input = FFIStr::to_str(input, length);
-    FFIStr::result(try_next(&input))
+    FFIStr::result(try_next(input))
 }
 
 #[no_mangle]
@@ -94,10 +81,8 @@ pub extern "C" fn tag() -> LineTag {
 fn try_goto_passage(passage: &str) -> Result<()> {
     unsafe {
         if let Some(runner) = RUNNER.as_mut() {
-            runner.bookmark.set_passage(passage.to_string());
-            runner.bookmark.set_line(0);
-            runner.bookmark.stack.clear();
-            runner.goto()?;
+            runner.clear_stack();
+            runner.goto(passage.to_string())?;
             Ok(())
         } else {
             Err(error!("Runner was not initialized."))

@@ -81,11 +81,18 @@ namespace Kataru
 
         #region Story
         [DllImport("kataru_ffi")]
-        static extern FFIStr load_story(byte[] path, UIntPtr length);
-        public static void LoadStory(string path)
+        static extern FFIStr init_runner(byte[] story_path, UIntPtr story_length, byte[] bookmark_path, UIntPtr bookmark_length, bool validate);
+        public static void InitRunner(string story_path, string bookmark_path, bool validate)
         {
-            var bytes = Encoding.UTF8.GetBytes(path);
-            load_story(bytes, (UIntPtr)bytes.Length).ThrowIfError();
+            var story_bytes = Encoding.UTF8.GetBytes(story_path);
+            var bookmark_bytes = Encoding.UTF8.GetBytes(bookmark_path);
+            init_runner(
+                story_bytes,
+                (UIntPtr)story_bytes.Length,
+                bookmark_bytes,
+                (UIntPtr)bookmark_bytes.Length,
+                validate
+            ).ThrowIfError();
         }
 
         [DllImport("kataru_ffi")]
@@ -95,11 +102,6 @@ namespace Kataru
             var bytes = Encoding.UTF8.GetBytes(path);
             save_story(bytes, (UIntPtr)bytes.Length).ThrowIfError();
         }
-
-        [DllImport("kataru_ffi")]
-        static extern FFIStr init_runner();
-        public static void InitRunner() =>
-            init_runner().ThrowIfError();
 
         [DllImport("kataru_ffi")]
         static extern FFIStr validate();
@@ -156,6 +158,16 @@ namespace Kataru
             string json = get_params().ToString();
             Debug.Log($"Got json: {json}");
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        }
+
+        [DllImport("kataru_ffi")]
+        static extern FFIStr get_state(bytes[] var, UIntPtr var_len);
+        static object GetState(string var)
+        {
+            var bytes = Encoding.UTF8.GetBytes(var);
+            string json = get_state(bytes, (UIntPtr)bytes.Length).ToString();
+            Debug.Log($"Got json: {json}");
+            return JsonConvert.DeserializeObject<Dictionary<string, object>>(json)["value"];
         }
 
         #region Commands

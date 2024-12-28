@@ -10,10 +10,19 @@ pub extern "C" fn test_mod() -> FFIStr {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub struct FFIStr {
     strptr: *const u8,
     length: usize,
+}
+impl PartialEq for FFIStr {
+    fn eq(&self, other: &Self) -> bool {
+        unsafe {
+            let self_slice = slice::from_raw_parts(self.strptr, self.length);
+            let other_slice = slice::from_raw_parts(other.strptr, other.length);
+            self_slice == other_slice
+        }
+    }
 }
 
 impl FFIStr {
@@ -24,8 +33,12 @@ impl FFIStr {
         }
     }
 
+    pub fn as_str(&self) -> &str {
+        unsafe { str::from_utf8_unchecked(slice::from_raw_parts(self.strptr, self.length)) }
+    }
+
     pub fn to_str(c_chars: *const c_char, length: usize) -> &'static str {
-        unsafe { &str::from_utf8_unchecked(slice::from_raw_parts(c_chars as *const u8, length)) }
+        unsafe { str::from_utf8_unchecked(slice::from_raw_parts(c_chars as *const u8, length)) }
     }
 
     pub fn result<T, E: fmt::Debug>(result: Result<T, E>) -> Self {

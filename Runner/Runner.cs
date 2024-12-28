@@ -72,7 +72,7 @@ namespace Kataru
             isWaiting = false;
 
             // Only load the story on Init.
-            FFI.LoadStory(targetPath);
+            FFI.InitRunner(targetPath, bookmarkPath, validate: true);
 
             isInitialized = true;
         }
@@ -139,9 +139,6 @@ namespace Kataru
                 Debug.Log($"Loading bookmark {bookmarkPath}");
                 FFI.LoadBookmark(bookmarkPath);
             }
-
-            Debug.Log("Initializing runner...");
-            FFI.InitRunner();
         }
 
         public static void SaveSnapshot(string name) => FFI.SaveSnapshot(name);
@@ -325,9 +322,8 @@ namespace Kataru
                 codegenPath: '{codegenPath}')");
             try
             {
-                FFI.LoadStory(storyPath);
-                FFI.LoadBookmark(bookmarkPath);
-                FFI.Validate();
+                bool validate = true;
+                FFI.InitRunner(storyPath, bookmarkPath, validate);
 
                 Debug.Log($"Story at '{storyPath}' validated. Saving compiled story to '{targetPath}'.");
                 FFI.SaveStory(targetPath);

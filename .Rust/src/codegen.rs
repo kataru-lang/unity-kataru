@@ -1,6 +1,7 @@
 use std::{fs, os::raw::c_char};
 
-pub use crate::{ffi::FFIStr, LINE, STORY};
+pub use crate::ffi::FFIStr;
+use crate::RUNNER;
 
 use kataru::*;
 
@@ -17,28 +18,24 @@ pub extern "C" fn codegen_consts(path: *const c_char, length: usize) -> FFIStr {
 /// Using the already loaded story, generate constants;
 fn try_codegen_consts(path: &str) -> Result<()> {
     unsafe {
-        match &STORY {
-            Some(story) => {
-                let source = build_codegen_consts(story)?;
-                match fs::read_to_string(path) {
-                    Ok(old_source) => {
-                        if source == old_source {
-                            CODEGEN_WAS_UPDATED = false;
-                            return Ok(());
-                        }
-                    }
-                    Err(_) => (),
-                };
-                if let Err(err) = fs::write(path, &source) {
-                    return Err(error!(
-                        "Error writing generated file to '{}': {}",
-                        path, err
-                    ));
+        if let Some(runner) = RUNNER.as_mut() {
+            let source = build_codegen_consts(runner.story())?;
+            if let Ok(old_source) = fs::read_to_string(path) {
+                if source == old_source {
+                    CODEGEN_WAS_UPDATED = false;
+                    return Ok(());
                 }
-                CODEGEN_WAS_UPDATED = true;
-                Ok(())
+            };
+            if let Err(err) = fs::write(path, &source) {
+                return Err(error!(
+                    "Error writing generated file to '{}': {}",
+                    path, err
+                ));
             }
-            None => Err(error!("Story was none.")),
+            CODEGEN_WAS_UPDATED = true;
+            Ok(())
+        } else {
+            Err(error!("Story was none."))
         }
     }
 }
@@ -89,18 +86,18 @@ pub fn build_codegen_consts(story: &Story) -> Result<String> {
         // For global namespace, don't add global to the sorted list.
         // And don't prepend the namespace.
         if namespace == kataru::GLOBAL {
-            for (character, _character_data) in &section.config.characters {
+            for character in section.config.characters.keys() {
                 characters.push(character.to_string());
             }
-            for (passage_name, _passage) in &section.passages {
+            for passage_name in section.passages.keys() {
                 passages.push(passage_name.to_string());
             }
         } else {
             namespaces.push(namespace);
-            for (character, _character_data) in &section.config.characters {
+            for character in section.config.characters.keys() {
                 characters.push(format!("{}:{}", namespace, character));
             }
-            for (passage_name, _passage) in &section.passages {
+            for passage_name in section.passages.keys() {
                 passages.push(format!("{}:{}", namespace, passage_name));
             }
         }

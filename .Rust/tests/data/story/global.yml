@@ -8,9 +8,14 @@ characters:
 state:
   var: false
 
+commands:
+  GlobalCommand:
+    param: 0
+
 ---
 Start:
   - Slime: Hey! Slime here.
+  - GlobalCommand: [1]
 
 EndDialogue:
   - return:
