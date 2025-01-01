@@ -161,13 +161,13 @@ namespace Kataru
         }
 
         [DllImport("kataru_ffi")]
-        static extern FFIStr get_state(bytes[] var, UIntPtr var_len);
-        static object GetState(string var)
+        static extern FFIStr get_state(byte[] var, UIntPtr var_len);
+        public static T GetState<T>(string var)
         {
             var bytes = Encoding.UTF8.GetBytes(var);
             string json = get_state(bytes, (UIntPtr)bytes.Length).ToString();
             Debug.Log($"Got json: {json}");
-            return JsonConvert.DeserializeObject<Dictionary<string, object>>(json)["value"];
+            return JsonConvert.DeserializeObject<Dictionary<string, T>>(json)["value"];
         }
 
         #region Commands
