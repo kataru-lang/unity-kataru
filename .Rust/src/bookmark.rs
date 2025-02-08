@@ -72,6 +72,17 @@ pub extern "C" fn set_state_bool(key: *const c_char, length: usize, value: bool)
 }
 
 #[no_mangle]
+pub extern "C" fn get_namespace() -> FFIStr {
+    unsafe {
+        if let Some(runner) = RUNNER.as_ref() {
+            FFIStr::from(runner.namespace())
+        } else {
+            FFIStr::from("")
+        }
+    }
+}
+
+#[no_mangle]
 pub extern "C" fn get_passage() -> FFIStr {
     unsafe {
         if let Some(runner) = RUNNER.as_ref() {
@@ -114,7 +125,19 @@ fn try_set_line(line: usize) -> Result<()> {
         }
     }
 }
+
 #[no_mangle]
 pub extern "C" fn set_line(line: usize) -> FFIStr {
     FFIStr::result(try_set_line(line))
+}
+
+#[no_mangle]
+pub extern "C" fn get_line() -> usize {
+    unsafe {
+        if let Some(runner) = RUNNER.as_ref() {
+            runner.get_line()
+        } else {
+            0
+        }
+    }
 }

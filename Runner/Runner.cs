@@ -144,11 +144,13 @@ namespace Kataru
         public static void SaveSnapshot(string name) => FFI.SaveSnapshot(name);
         public static void LoadSnapshot(string name) => FFI.LoadSnapshot(name);
         public static void SetLine(int line) => FFI.SetLine(line);
+        public static int GetLine() => FFI.GetLine();
         public static void GotoPassage(string passage) => FFI.GotoPassage(passage);
-        public static T GetState<T>(string key) => FFI.GetState<T>(key);
         public static void SetState(string key, string value) => FFI.SetState(key, value);
         public static void SetState(string key, double value) => FFI.SetState(key, value);
         public static void SetState(string key, bool value) => FFI.SetState(key, value);
+        public static T GetState<T>(string key) => FFI.GetState<T>(key);
+        public static string GetNamespace() => FFI.GetNamespace();
         public static string GetPassage() => FFI.GetPassage();
 
         /// <summary>

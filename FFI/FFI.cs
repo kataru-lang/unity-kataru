@@ -75,6 +75,14 @@ namespace Kataru
         public static void SetLine(int line) => set_line((UIntPtr)line).ThrowIfError();
 
         [DllImport("kataru_ffi")]
+        static extern UIntPtr get_line();
+        public static int GetLine() => (int)get_line();
+
+        [DllImport("kataru_ffi")]
+        static extern FFIStr get_namespace();
+        public static string GetNamespace() => get_namespace().ToString();
+
+        [DllImport("kataru_ffi")]
         static extern FFIStr get_passage();
         public static string GetPassage() => get_passage().ToString();
         #endregion
