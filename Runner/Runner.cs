@@ -153,6 +153,14 @@ namespace Kataru
         public static string GetNamespace() => FFI.GetNamespace();
         public static string GetPassage() => FFI.GetPassage();
 
+        public static void RunSnapshot(string snapshot)
+        {
+            isRunning = true;
+            LoadSnapshot(snapshot);
+            SetLine(Mathf.Max(0, GetLine() - 1));
+            Next();
+        }
+
         /// <summary>
         /// Goto a passage and run the first line.
         /// </summary>
@@ -276,13 +284,36 @@ namespace Kataru
         }
 
         /// <summary>
+        /// Calls exit after waiting a bit.
+        /// Must be called using MonoBehaviour.StartCoroutine.
+        /// </summary>
+        /// <param name="frames"></param>
+        /// <returns></returns>
+        public static IEnumerator DelayedExit(int frames)
+        {
+            Debug.Log("Calling Runner.DelayedExit");
+            isWaiting = true;
+            for (int i = 0; i < frames; i++)
+            {
+                yield return null;
+            }
+            while (Time.timeScale != 1f)
+            {
+                yield return null;
+            }
+
+            isWaiting = false;
+            Exit();
+        }
+
+        /// <summary>
         /// Calls next after waiting a bit.
-        /// Must be called using GameObject.StartCoroutine.
+        /// Must be called using MonoBehaviour.StartCoroutine.
         /// </summary>
         /// <returns></returns>
         public static IEnumerator DelayedNext(float seconds, string input = "")
         {
-            // Debug.Log("Calling Runner.DelayedNext");
+            Debug.Log("Calling Runner.DelayedNext");
             isWaiting = true;
             yield return new WaitForSecondsRealtime(seconds);
             while (Time.timeScale != 1f)
