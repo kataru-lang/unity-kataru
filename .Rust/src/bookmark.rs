@@ -135,7 +135,7 @@ pub extern "C" fn set_line(line: usize) -> FFIStr {
 pub extern "C" fn get_line() -> usize {
     unsafe {
         if let Some(runner) = RUNNER.as_ref() {
-            runner.get_line()
+            runner.line()
         } else {
             0
         }

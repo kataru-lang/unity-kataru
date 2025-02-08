@@ -138,9 +138,9 @@ checksum = "d75a2a4b1b190afb6f5425f10f6a8f959d2ea0b9c2b1d79553551850539e4674"
 
 [[package]]
 name = "kataru"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d9d78b1b1ae4798c195e4610c37d101c3418a78658fe341fff07f4a657e97ce"
+checksum = "fd5afa6f5566aa73111b7cb04c6f0f5d34faf4d2b02f085e7e0222e3cc239c7f"
 dependencies = [
  "bincode",
  "colored",
@@ -160,7 +160,7 @@ dependencies = [
 
 [[package]]
 name = "kataru-ffi"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "kataru",
  "lazy_static",
