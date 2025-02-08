@@ -274,39 +274,6 @@ namespace Kataru
         }
 
         /// <summary>
-        /// Exit out of the current passage. 
-        /// Can be used to forcibly exit out of a running, incompleted passage.
-        /// </summary>
-        public static void Exit()
-        {
-            isRunning = false;
-            OnDialogueEnd.Invoke();
-        }
-
-        /// <summary>
-        /// Calls exit after waiting a bit.
-        /// Must be called using MonoBehaviour.StartCoroutine.
-        /// </summary>
-        /// <param name="frames"></param>
-        /// <returns></returns>
-        public static IEnumerator DelayedExit(int frames)
-        {
-            Debug.Log("Calling Runner.DelayedExit");
-            isWaiting = true;
-            for (int i = 0; i < frames; i++)
-            {
-                yield return null;
-            }
-            while (Time.timeScale != 1f)
-            {
-                yield return null;
-            }
-
-            isWaiting = false;
-            Exit();
-        }
-
-        /// <summary>
         /// Calls next after waiting a bit.
         /// Must be called using MonoBehaviour.StartCoroutine.
         /// </summary>
@@ -337,6 +304,39 @@ namespace Kataru
 
             isWaiting = false;
             Next(input);
+        }
+
+        /// <summary>
+        /// Exit out of the current passage. 
+        /// Can be used to forcibly exit out of a running, incompleted passage.
+        /// </summary>
+        public static void Exit()
+        {
+            isRunning = false;
+            OnDialogueEnd.Invoke();
+        }
+
+        /// <summary>
+        /// Calls exit after waiting a bit.
+        /// Must be called using MonoBehaviour.StartCoroutine.
+        /// </summary>
+        /// <param name="frames"></param>
+        /// <returns></returns>
+        public static IEnumerator DelayedExit(int frames)
+        {
+            Debug.Log("Calling Runner.DelayedExit");
+            isWaiting = true;
+            for (int i = 0; i < frames; i++)
+            {
+                yield return null;
+            }
+            while (Time.timeScale != 1f)
+            {
+                yield return null;
+            }
+
+            isWaiting = false;
+            Exit();
         }
 
 #if UNITY_EDITOR
