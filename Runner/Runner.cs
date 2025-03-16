@@ -35,9 +35,9 @@ namespace Kataru
         public static DelegateMap CharacterDelegates = new DelegateMap();
 
         public static LineTag Tag = LineTag.End;
-        public static bool isRunning = false;
+        public static bool isRunning { get; private set; }
+        public static bool isInitialized { get; private set; }
         private static bool isWaiting = false;
-        public static bool isInitialized = false;
 
 
         /// <summary>
