@@ -161,6 +161,14 @@ namespace Kataru
             Next();
         }
 
+        public static void RunPassageAtLine(string passage, int line)
+        {
+            isRunning = true;
+            GotoPassage(passage);
+            SetLine(line);
+            Next();
+        }
+
         /// <summary>
         /// Goto a passage and run the first line.
         /// </summary>
