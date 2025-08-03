@@ -75,7 +75,7 @@ namespace Kataru
     /// </summary>
     public class Attributed : MonoBehaviour
     {
-        protected virtual string Name { get; }
+        public virtual string Name { get; }
 
         protected struct NamedDelegate
         {
