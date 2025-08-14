@@ -318,10 +318,11 @@ namespace Kataru
         /// Exit out of the current passage. 
         /// Can be used to forcibly exit out of a running, incompleted passage.
         /// </summary>
-        public static void Exit()
+        public static void Exit(bool raiseEvent = true)
         {
             isRunning = false;
-            OnDialogueEnd.Invoke();
+            if (raiseEvent)
+                OnDialogueEnd.Invoke();
         }
 
         /// <summary>
@@ -330,7 +331,7 @@ namespace Kataru
         /// </summary>
         /// <param name="frames"></param>
         /// <returns></returns>
-        public static IEnumerator DelayedExit(int frames)
+        public static IEnumerator DelayedExit(int frames, bool raiseEvent = true)
         {
             Debug.Log("Calling Runner.DelayedExit");
             isWaiting = true;
@@ -344,7 +345,7 @@ namespace Kataru
             }
 
             isWaiting = false;
-            Exit();
+            Exit(raiseEvent);
         }
 
 #if UNITY_EDITOR
