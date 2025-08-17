@@ -153,12 +153,10 @@ namespace Kataru
         public static string GetNamespace() => FFI.GetNamespace();
         public static string GetPassage() => FFI.GetPassage();
 
-        public static void RunSnapshot(string snapshot)
+        public static (string, int) GetSnapshot(string snapshot)
         {
-            isRunning = true;
             LoadSnapshot(snapshot);
-            SetLine(Mathf.Max(0, GetLine() - 1));
-            Next();
+            return (GetPassage(), Mathf.Max(0, GetLine() - 1));
         }
 
         public static void RunPassageAtLine(string passage, int line)
@@ -318,11 +316,11 @@ namespace Kataru
         /// Exit out of the current passage. 
         /// Can be used to forcibly exit out of a running, incompleted passage.
         /// </summary>
-        public static void Exit(bool raiseEvent = true)
+        public static void Exit()
         {
+            if (!isRunning) return;
             isRunning = false;
-            if (raiseEvent)
-                OnDialogueEnd.Invoke();
+            OnDialogueEnd.Invoke();
         }
 
         /// <summary>
@@ -331,7 +329,7 @@ namespace Kataru
         /// </summary>
         /// <param name="frames"></param>
         /// <returns></returns>
-        public static IEnumerator DelayedExit(int frames, bool raiseEvent = true)
+        public static IEnumerator DelayedExit(int frames)
         {
             Debug.Log("Calling Runner.DelayedExit");
             isWaiting = true;
@@ -345,7 +343,7 @@ namespace Kataru
             }
 
             isWaiting = false;
-            Exit(raiseEvent);
+            Exit();
         }
 
 #if UNITY_EDITOR
