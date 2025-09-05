@@ -313,6 +313,18 @@ namespace Kataru
         }
 
         /// <summary>
+        /// Call this if one of the Delayed__ IEnumerators gets started 
+        /// by an initiator then needs to be unceremoniously interrupted.
+        /// </summary>
+        /// <param name="initiator"></param>
+        public static void InterruptDelay(MonoBehaviour initiator, Coroutine delay)
+        {
+            if (delay == null) return;
+            initiator.StopCoroutine(delay);
+            isWaiting = false;
+        }
+
+        /// <summary>
         /// Exit out of the current passage. 
         /// Can be used to forcibly exit out of a running, incompleted passage.
         /// </summary>
@@ -337,7 +349,7 @@ namespace Kataru
             {
                 yield return null;
             }
-            while (Time.timeScale != 1f)
+            while (Time.timeScale == 0)
             {
                 yield return null;
             }
