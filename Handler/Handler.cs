@@ -23,10 +23,6 @@ namespace Kataru
         /// </summary>
         protected virtual void OnEnable()
         {
-            Runner.OnChoices += OnChoices;
-            Runner.OnDialogueEnd += OnDialogueEnd;
-            Runner.OnInvalidChoice += OnInvalidChoice;
-
             foreach (var namedDelegate in GetActionsForAttribute<CommandHandler>())
             {
                 CommandDelegates.Add(namedDelegate.name, namedDelegate.@delegate, namedDelegate.autoNext);
@@ -45,10 +41,6 @@ namespace Kataru
         /// </summary>
         protected virtual void OnDisable()
         {
-            Runner.OnChoices -= OnChoices;
-            Runner.OnDialogueEnd -= OnDialogueEnd;
-            Runner.OnInvalidChoice -= OnInvalidChoice;
-
             foreach (var pair in CommandDelegates)
             {
                 foreach (var @delegate in pair.Value.Keys)
@@ -68,9 +60,5 @@ namespace Kataru
             CommandDelegates.Clear();
             CharacterDelegates.Clear();
         }
-
-        protected virtual void OnChoices(Choices choices) { }
-        protected virtual void OnDialogueEnd() { }
-        protected virtual void OnInvalidChoice() { }
     }
 }

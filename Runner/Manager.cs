@@ -8,7 +8,7 @@ namespace Kataru
     /// This class is in charge of initializing the Runner.
     /// Also includes examples of reacting to Runner's events.
     /// </summary>
-    public class Manager : Handler
+    public class Manager : HandlerExtended
     {
 
         protected virtual void Awake()
