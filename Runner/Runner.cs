@@ -153,18 +153,18 @@ namespace Kataru
         public static string GetNamespace() => FFI.GetNamespace();
         public static string GetPassage() => FFI.GetPassage();
 
-        public static (string, int) GetSnapshot(string snapshot)
-        {
-            LoadSnapshot(snapshot);
-            return (GetPassage(), Mathf.Max(0, GetLine() - 1));
-        }
-
         public static void RunPassageAtLine(string passage, int line)
         {
             isRunning = true;
             GotoPassage(passage);
             SetLine(line);
             Next();
+        }
+
+        public static void RunCurrentLine()
+        {
+            isRunning = true;
+            ReadLine();
         }
 
         /// <summary>
@@ -219,6 +219,11 @@ namespace Kataru
             }
 
             FFI.Next(input);
+            return ReadLine();
+        }
+
+        private static LineTag ReadLine()
+        {
             Tag = FFI.Tag();
 #if UNITY_EDITOR
             Debug.Log($"Tag: {Tag}");
