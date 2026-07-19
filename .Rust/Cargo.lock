@@ -84,9 +84,9 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
 name = "kataru"
-version = "0.2.1"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e35d0b04d916d23d397e327d8a3ccb404bc4edd6302ee626b7dfac1f7d08059"
+checksum = "03adfbb8b94129fb754ab2bd95ed634ca8298e59fd7948f53716b700157e128b"
 dependencies = [
  "bincode",
  "colored",
@@ -335,7 +335,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 3.0.0",
+ "syn 3.0.1",
 ]
 
 [[package]]
@@ -392,9 +392,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "3.0.0"
+version = "3.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f2fac314a64dc9a36e61a9eb4261a5e9bbfbc922b27e518af97bc32b926cf967"
+checksum = "5edbec4ed188954a10c12c038215f8ce7606b2d5c973cd8dc43e8795065c5f2f"
 dependencies = [
  "proc-macro2",
  "quote",
