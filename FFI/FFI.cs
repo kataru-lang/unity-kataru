@@ -129,6 +129,13 @@ namespace Kataru
         public static LineTag Tag() => tag();
 
         [DllImport("kataru_ffi")]
+        static extern FFIStr read_line();
+        public static void ReadLine()
+        {
+            read_line().ThrowIfError();
+        }
+
+        [DllImport("kataru_ffi")]
         static extern FFIStr goto_passage(byte[] passage, UIntPtr length);
         public static void GotoPassage(string passage)
         {

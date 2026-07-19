@@ -190,6 +190,7 @@ namespace Kataru
         public static void RunCurrentLine()
         {
             isRunning = true;
+            FFI.ReadLine();
             ReadLine();
         }
 
