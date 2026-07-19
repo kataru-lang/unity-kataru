@@ -94,7 +94,7 @@ namespace Kataru
                 parent.Create();
             }
 #if UNITY_EDITOR
-            Debug.Log($"Kataru.Save('{savePath}')");
+            Debug.Log($"[Runner] Kataru.Save('{savePath}')");
 #endif
             FFI.SaveBookmark(savePath);
         }
@@ -112,7 +112,7 @@ namespace Kataru
             if (SaveExists())
             {
 #if UNITY_EDITOR
-                Debug.Log($"Kataru.DeleteSave() at '{savePath}'");
+                Debug.Log($"[Runner] Kataru.DeleteSave() at '{savePath}'");
 #endif
                 File.Delete(savePath);
             }
@@ -136,9 +136,35 @@ namespace Kataru
             }
             else
             {
-                Debug.Log($"Loading bookmark {bookmarkPath}");
+                Debug.Log($"[Runner] Loading bookmark {bookmarkPath}");
                 FFI.LoadBookmark(bookmarkPath);
             }
+        }
+
+        public static void PrintSave()
+        {
+#if UNITY_EDITOR
+            Save();
+            if (File.Exists(savePath))
+            {
+                try
+                {
+                    // 3. Read all contents of the text file
+                    string fileContents = File.ReadAllText(savePath);
+
+                    // 4. Print the text to Unity's Console window
+                    Debug.Log($"[Runner] Print bookmark:\n{fileContents}");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[Runner] Failed to read file: {e.Message}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[Runner] File not found at path: {savePath}");
+            }
+#endif
         }
 
         public static void SaveSnapshot(string name) => FFI.SaveSnapshot(name);
@@ -164,6 +190,7 @@ namespace Kataru
         public static void RunCurrentLine()
         {
             isRunning = true;
+            FFI.ReadLine();
             ReadLine();
         }
 
@@ -207,7 +234,7 @@ namespace Kataru
         {
 #if UNITY_EDITOR
             string caller = (new System.Diagnostics.StackTrace()).GetFrame(auto ? 2 : 1).GetMethod().Name;
-            Debug.Log($"Kataru.Runner.Next('{input}') from {caller}.");
+            Debug.Log($"[Runner] Kataru.Runner.Next('{input}') from {caller}.");
 #endif
             if (isWaiting)
             {
@@ -226,7 +253,7 @@ namespace Kataru
         {
             Tag = FFI.Tag();
 #if UNITY_EDITOR
-            Debug.Log($"Tag: {Tag}");
+            Debug.Log($"[Runner] {GetPassage()}.{GetLine()} Tag: {Tag}");
 #endif
             switch (Tag)
             {
@@ -241,7 +268,7 @@ namespace Kataru
                 case LineTag.Dialogue:
                     Dialogue dialogue = FFI.LoadDialogue();
 #if UNITY_EDITOR
-                    Debug.Log($"{dialogue.name}: '{dialogue.text}'");
+                    Debug.Log($"[Runner] {dialogue.name}: '{dialogue.text}'");
 #endif
                     CharacterDelegates.Invoke(dialogue.name, new object[] { dialogue });
                     break;
@@ -249,7 +276,7 @@ namespace Kataru
                 case LineTag.Command:
                     Command command = FFI.GetCommand();
 #if UNITY_EDITOR
-                    Debug.Log($"Calling command '{command.name}'");
+                    Debug.Log($"[Runner] Calling command '{command.name}'");
                     if (string.IsNullOrEmpty(command.name))
                     {
                         throw new KeyNotFoundException($"Received empty Kataru command. Did you use a global command as a character command?");
@@ -291,7 +318,7 @@ namespace Kataru
         /// <returns></returns>
         public static IEnumerator DelayedNext(float seconds, string input = "")
         {
-            Debug.Log("Calling Runner.DelayedNext");
+            Debug.Log("[Runner] Calling Runner.DelayedNext");
             isWaiting = true;
             yield return new WaitForSecondsRealtime(seconds);
             while (Time.timeScale != 1f)
@@ -337,6 +364,7 @@ namespace Kataru
         {
             if (!isRunning) return;
             isRunning = false;
+            Debug.Log("[Runner] Calling Runner.Exit");
             OnDialogueEnd.Invoke();
         }
 
@@ -348,7 +376,7 @@ namespace Kataru
         /// <returns></returns>
         public static IEnumerator DelayedExit(int frames)
         {
-            Debug.Log("Calling Runner.DelayedExit");
+            Debug.Log("[Runner] Calling Runner.DelayedExit");
             isWaiting = true;
             for (int i = 0; i < frames; i++)
             {
@@ -374,7 +402,7 @@ namespace Kataru
         /// <param name="codegenPath"></param>
         public static void Compile(string storyPath, string bookmarkPath, string targetPath, string codegenPath)
         {
-            Debug.Log($@"Runner.Compile(storyPath: '{storyPath}'
+            Debug.Log($@"[Runner] Runner.Compile(storyPath: '{storyPath}'
                 bookmarkPath: '{bookmarkPath}'
                 targetPath: '{targetPath}'
                 codegenPath: '{codegenPath}')");
@@ -383,14 +411,14 @@ namespace Kataru
                 bool validate = true;
                 FFI.InitRunner(storyPath, bookmarkPath, validate);
 
-                Debug.Log($"Story at '{storyPath}' validated. Saving compiled story to '{targetPath}'.");
+                Debug.Log($"[Runner] Story at '{storyPath}' validated. Saving compiled story to '{targetPath}'.");
                 FFI.SaveStory(targetPath);
                 FFI.CodegenConsts(codegenPath);
 
                 // Force unity to recompile using the newly generated source code.
                 if (FFI.CodegenWasUpdated())
                 {
-                    Debug.Log($"Constants file generated at {targetPath}");
+                    Debug.Log($"[Runner] Constants file generated at {targetPath}");
                     UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation();
                 }
             }
