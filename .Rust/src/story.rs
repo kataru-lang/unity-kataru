@@ -73,6 +73,21 @@ pub extern "C" fn next(input: *const c_char, length: usize) -> FFIStr {
     FFIStr::result(try_next(input))
 }
 
+fn try_read_line() -> Result<()> {
+    unsafe {
+        if let Some(runner) = RUNNER.as_mut() {
+            LINE = runner.read_line()?;
+            Ok(())
+        } else {
+            Err(error!("Runner was not initialized."))
+        }
+    }
+}
+#[no_mangle]
+pub extern "C" fn read_line() -> FFIStr {
+    FFIStr::result(try_read_line())
+}
+
 #[no_mangle]
 pub extern "C" fn tag() -> LineTag {
     unsafe { LineTag::tag(&LINE) }
