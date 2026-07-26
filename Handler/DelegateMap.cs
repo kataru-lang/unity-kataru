@@ -25,8 +25,7 @@ namespace Kataru
             ConcurrentDictionary<Delegate, bool> delegates;
             if (TryGetValue(name, out delegates))
             {
-                bool removed;
-                delegates.TryRemove(@delegate, out removed);
+                delegates.TryRemove(@delegate, out _);
             }
         }
 
