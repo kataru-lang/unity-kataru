@@ -149,10 +149,7 @@ namespace Kataru
             {
                 try
                 {
-                    // 3. Read all contents of the text file
                     string fileContents = File.ReadAllText(savePath);
-
-                    // 4. Print the text to Unity's Console window
                     Debug.Log($"[Runner] Print bookmark:\n{fileContents}");
                 }
                 catch (Exception e)
